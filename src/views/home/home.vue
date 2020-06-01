@@ -226,6 +226,7 @@
 </template>
 
 <script>
+location.href="/sys/user-manage"
 import { ipInfo } from "@/api/index";
 import visitVolume from "./components/visitVolume.vue";
 import visitSeparation from "./components/visitSeparation.vue";
@@ -300,23 +301,7 @@ export default {
   },
   mounted() {
     this.init();
-    // Gitalk
-    var gitalk = new Gitalk({
-      clientID: "a128de2dd7383614273a",
-      clientSecret: "a77691ecb662a8303a6c686ae651ae035868da6e",
-      repo: "xboot-comments",
-      owner: "Exrick",
-      admin: ["Exrick"],
-      distractionFreeMode: false // 遮罩效果
-    });
-    gitalk.render("comments");
-    // 宣传视频
-    let videoFlag = "videoShowed";
-    let xbootVideo = Cookies.get(videoFlag);
-    if (xbootVideo != videoFlag) {
-      this.showVideo = true;
-      Cookies.set(videoFlag, videoFlag);
-    }
+  
   }
 };
 </script>
