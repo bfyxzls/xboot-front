@@ -301,3 +301,20 @@ export const deleteQuartz = (params) => {
 export const base64Upload = (params) => {
     return postRequest('/upload/file', params)
 }
+
+// 获取物业数据 多条件
+export const getTenementListData = (params) => {
+    return getRequest('/tenement/getByCondition', params)
+}
+// 添加物业
+export const addTenement = (params) => {
+    return postRequest('/tenement/add', params)
+}
+// 编辑物业
+export const editTenement = (params) => {
+    return postRequest('/tenement/edit', params)
+}
+// 删除物业
+export const deleteTenement = (params) => {
+    return postRequest('/tenement/delByIds', params)
+}
