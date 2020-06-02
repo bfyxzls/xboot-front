@@ -19,5 +19,6 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw*
-
+*.rar
+*.zip
 package-lock.json
