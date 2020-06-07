@@ -286,7 +286,7 @@ export default {
       });
     },
     setCurrentValue(value) {
-      if (value === this.visible) {
+       if (value === this.visible) {
         return;
       }
       if (this.type == "1") {
@@ -318,6 +318,8 @@ export default {
           selectRolesId.push(e.id);
         });
         data.roleIds = selectRolesId;
+        console.log(data.roles)
+        console.log(selectRolesId)
         delete data.roles;
         delete data.permissions;
         // 密码强度

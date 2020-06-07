@@ -68,7 +68,7 @@
         </FormItem>
         <FormItem label="角色分配" prop="roleIds">
           <Select v-model="roleForm.roleIds" multiple>
-            <Option v-for="item in roleList" :value="item.id" :key="item.id" :label="item.name">
+            <Option v-for="item in roleList"  v-bind:value="item.id" :key="item.id" :label="item.name">
               <span style="margin-right:10px;">{{ item.name }}</span>
               <span style="color:#ccc;">{{ item.description }}</span>
             </Option>
@@ -108,8 +108,19 @@ import {
 import util from "@/libs/util.js";
 export default {
   name: "taskType-manage",
+  props: {
+    value: {
+      type: Boolean,
+      default: false
+    },
+    type: {
+      type: String,
+      default: "0"
+    }
+  },
   data() {
     return {
+      data:[],
       openTip: true,
       openLevel: "0",
       loading: true,
@@ -228,7 +239,6 @@ export default {
           }
         }
       ],
-      data: [],
       pageNumber: 1,
       pageSize: 10,
       total: 0,
@@ -454,29 +464,9 @@ export default {
         }
       });
     },
-
-
-   setCurrentValue(value) {
-      if (value === this.visible) {
-        return;
+     setCurrentValue(value) {
+      console.log(value);
       }
-      
-      // 清空数据
-      this.$refs.form.resetFields();
-         // 回显数据
-        let data = this.data;    
-        // 角色
-        let selectRolesId = [];
-        data.roles.forEach(function(e) {
-          selectRolesId.push(e.id);
-        });
-        data.roleIds = selectRolesId;
-        delete data.roles;
-        // 回显
-        this.form = data;
-        this.visible = value;
-
-    }
   },
   watch: {
     value(val) {
