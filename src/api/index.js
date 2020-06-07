@@ -302,7 +302,7 @@ export const base64Upload = (params) => {
     return postRequest('/upload/file', params)
 }
 
-// 获取物业数据 多条件
+// 获取物业数据
 export const getTenementListData = (params) => {
     return getRequest('/tenement/getByCondition', params)
 }
@@ -317,4 +317,111 @@ export const editTenement = (params) => {
 // 删除物业
 export const deleteTenement = (params) => {
     return postRequest('/tenement/delByIds', params)
+}
+
+// 获取小区数据
+export const getCourtListData = (params) => {
+    return getRequest('/court/getByCondition', params)
+}
+// 添加小区
+export const addCourt = (params) => {
+    return postRequest('/court/add', params)
+}
+// 编辑小区
+export const editCourt = (params) => {
+    return postRequest('/court/edit', params)
+}
+// 删除小区
+export const deleteCourt = (params) => {
+    return postRequest('/court/delByIds', params)
+}
+
+// 获取评价分类数据
+export const getTypeListData = (params) => {
+    return getRequest('/type/getByCondition', params)
+}
+
+//全部评价类型
+export const getAllTypeList = () => {
+    return getRequest('/type/getAllTypeList')
+}
+
+// 添加评价分类
+export const addType = (params) => {
+    return postRequest('/type/add', params)
+}
+// 编辑评价分类
+export const editType = (params) => {
+    return postRequest('/type/edit', params)
+}
+// 删除评价分类
+export const deleteType = (params) => {
+    return postRequest('/type/delByIds', params)
+}
+
+// 获取任务数据
+export const getTaskListData = (params) => {
+    return getRequest('/task/getByCondition', params)
+}
+// 添加任务
+export const addTask = (params) => {
+    return postRequest('/task/add', params)
+}
+// 编辑任务
+export const editTask = (params) => {
+    return postRequest('/task/edit', params)
+}
+// 删除任务
+export const deleteTask = (params) => {
+    return postRequest('/task/delByIds', params)
+}
+
+// 添加模板
+export const addTemplate = (params) => {
+    return postRequest('/template/add', params)
+}
+// 编辑模板
+export const editTemplate = (params) => {
+    return postRequest('/template/edit', params)
+}
+// 删除模板
+export const deleteTemplate  = (params) => {
+    return postRequest('/template/delByIds', params)
+}
+// 模板详细
+export const getDetail  = (params) => {
+    return getRequest('/template/get/', params)
+}
+// 获取评价记录
+export const getRecordListData = (params) => {
+    return getRequest('/record/getByCondition', params)
+}
+// 添加评价记录
+export const addRecord = (params) => {
+    return postRequest('/record/add', params)
+}
+// 编辑评价记录
+export const editRecord = (params) => {
+    return postRequest('/record/edit', params)
+}
+// 删除评价记录
+export const deleteRecord = (params) => {
+    return postRequest('/record/delByIds', params)
+}
+
+// 获取任务类型配置
+export const getTaskTypeListData = (params) => {
+    return getRequest('/taskType/getByCondition', params)
+}
+// 添加任务类型配置
+export const addTaskType = (params) => {
+    return postRequest('/taskType/add', params)
+}
+// 编辑任务类型配置
+export const editTaskType = (params) => {
+    return postRequest('/taskType/edit', params)
+}
+// 删除任务类型配置
+export const deleteTaskType = (params) => {
+    return postRequest('/taskType/delByIds', params)
 }

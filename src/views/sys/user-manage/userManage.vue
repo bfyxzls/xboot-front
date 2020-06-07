@@ -7,10 +7,10 @@
     <Card>
       <Row v-show="openSearch" @keydown.enter.native="handleSearch">
         <Form ref="searchForm" :model="searchForm" inline :label-width="70">
-          <Form-item label="用户名" prop="nickname">
+          <Form-item label="用户名" prop="nickName">
             <Input
               type="text"
-              v-model="searchForm.nickname"
+              v-model="searchForm.nickName"
               clearable
               placeholder="请输入用户名"
               style="width: 200px"
@@ -188,7 +188,7 @@ export default {
       searchKey: "",
       searchForm: {
         id: "",
-        nickname: "",
+        nickName: "",
         username: "",
         departmentId: "",
         mobile: "",
@@ -226,7 +226,7 @@ export default {
         },
         {
           title: "用户名",
-          key: "nickname",
+          key: "nickName",
           minWidth: 125,
           sortable: true,
           fixed: "left",
@@ -240,7 +240,7 @@ export default {
                   }
                 }
               },
-              params.row.nickname
+              params.row.nickName
             );
           }
         },

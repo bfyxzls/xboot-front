@@ -1,12 +1,12 @@
 <style lang="less">
 @import "../../../styles/table-common.less";
-@import "./tenementManage.less";
+@import "./taskManage.less";
 </style>
 <template>
   <div class="search">
     <Card>
       <Row class="operation">
-        <Button @click="addTenement" type="primary" icon="md-add">添加物业</Button>
+        <Button @click="add" type="primary" icon="md-add">添加</Button>
         <Button @click="delAll" icon="md-trash">批量删除</Button>
         <Button @click="init" icon="md-refresh">刷新</Button>
         <Button type="dashed" @click="openTip=!openTip">{{openTip ? "关闭提示" : "开启提示"}}</Button>
@@ -46,12 +46,18 @@
       </Row>
     </Card>
 
-    <!-- 编辑 -->
+    <!-- 添加和编辑 -->
     <Modal :title="modalTitle" v-model="roleModalVisible" :mask-closable="false" :width="500">
       <Form ref="roleForm" :model="roleForm" :label-width="80" :rules="roleFormValidate">
         <FormItem label="名称" prop="title">
           <Input v-model="roleForm.title" placeholder="请输入名称" />
         </FormItem>
+        <FormItem label="状态" prop="status">
+              <i-switch size="large" v-model="roleForm.status" :true-value="1" :false-value="0">
+                <span slot="open">启用</span>
+                <span slot="close">禁用</span>
+              </i-switch>
+            </FormItem>
         <FormItem label="备注" prop="description">
           <Input v-model="roleForm.description" />
         </FormItem>
@@ -68,14 +74,14 @@
 
 <script>
 import {
-  addTenement,
-  editTenement,
-  deleteTenement,
-  getTenementListData
+  addTask,
+  editTask,
+  deleteTask,
+  getTaskListData
 } from "@/api/index";
 import util from "@/libs/util.js";
 export default {
-  name: "tenement-manage",
+  name: "task-manage",
   data() {
     return {
       openTip: true,
@@ -116,6 +122,33 @@ export default {
           key: "title",
           width: 150,
           sortable: true
+        },
+        {
+          title: "状态",
+          key: "status",
+          align: "center",
+          width: 110,
+          render: (h, params) => {
+            if (params.row.status == 1) {
+              return h("div", [
+                h("Badge", {
+                  props: {
+                    status: "success",
+                    text: "启用"
+                  }
+                })
+              ]);
+            } else if (params.row.status == 0) {
+              return h("div", [
+                h("Badge", {
+                  props: {
+                    status: "error",
+                    text: "禁用"
+                  }
+                })
+              ]);
+            }
+          }
         },
         {
           title: "备注",
@@ -260,7 +293,7 @@ export default {
      getList() {
       // 多条件搜索用户列表
       this.loading = true;
-      getTenementListData(this.searchForm).then(res => {
+      getTaskListData(this.searchForm).then(res => {
         this.loading = false;
         if (res.success) {
           this.data = res.result.content;
@@ -277,7 +310,7 @@ export default {
           if (this.modalType == 0) {
             // 添加
             this.submitLoading = true;
-            addTenement(this.roleForm).then(res => {
+            addTask(this.roleForm).then(res => {
               this.submitLoading = false;
               if (res.success) {
                 this.$Message.success("操作成功");
@@ -287,7 +320,7 @@ export default {
             });
           } else {
             this.submitLoading = true;
-            editTenement(this.roleForm).then(res => {
+            editTask(this.roleForm).then(res => {
               this.submitLoading = false;
               if (res.success) {
                 this.$Message.success("操作成功");
@@ -299,7 +332,7 @@ export default {
         }
       });
     },
-    addTenement() {
+    add() {
       this.modalType = 0;
       this.modalTitle = "添加";
       this.$refs.roleForm.resetFields();
@@ -327,7 +360,7 @@ export default {
         content: "您确认要删除 " + v.title + " ?",
         loading: true,
         onOk: () => {
-          deleteTenement({ids: v.id}).then(res => {
+          deleteTask({ids: v.id}).then(res => {
             this.$Modal.remove();
             if (res.success) {
               this.$Message.success("删除成功");
@@ -361,7 +394,7 @@ export default {
             ids += e.id + ",";
           });
           ids = ids.substring(0, ids.length - 1);
-          deleteTenement({ids: ids}).then(res => {
+          deleteTask({ids: ids}).then(res => {
             this.$Modal.remove();
             if (res.success) {
               this.$Message.success("删除成功");

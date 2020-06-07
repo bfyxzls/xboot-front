@@ -1,12 +1,12 @@
 <style lang="less">
 @import "../../../styles/table-common.less";
-@import "./tenementManage.less";
+@import "./taskTypeManage.less";
 </style>
 <template>
   <div class="search">
     <Card>
       <Row class="operation">
-        <Button @click="addTenement" type="primary" icon="md-add">添加物业</Button>
+        <Button @click="add" type="primary" icon="md-add">添加</Button>
         <Button @click="delAll" icon="md-trash">批量删除</Button>
         <Button @click="init" icon="md-refresh">刷新</Button>
         <Button type="dashed" @click="openTip=!openTip">{{openTip ? "关闭提示" : "开启提示"}}</Button>
@@ -46,13 +46,44 @@
       </Row>
     </Card>
 
-    <!-- 编辑 -->
+    <!-- 添加和编辑 -->
     <Modal :title="modalTitle" v-model="roleModalVisible" :mask-closable="false" :width="500">
       <Form ref="roleForm" :model="roleForm" :label-width="80" :rules="roleFormValidate">
-        <FormItem label="名称" prop="title">
-          <Input v-model="roleForm.title" placeholder="请输入名称" />
+        <FormItem label="任务" prop="taskId">
+          <Select v-model="roleForm.taskId">
+            <Option v-for="item in taskList" :value="item.id" :key="item.id" :label="item.title">
+              <span style="margin-right:10px;">{{ item.title }}</span>
+              <span style="color:#ccc;">{{ item.description }}</span>
+            </Option>
+          </Select>
         </FormItem>
-        <FormItem label="备注" prop="description">
+
+        <FormItem label="分类" prop="typeId">
+          <Select v-model="roleForm.typeId">
+            <Option v-for="item in typeList" :value="item.id" :key="item.id" :label="item.title">
+              <span style="margin-right:10px;">{{ item.title }}</span>
+              <span style="color:#ccc;">{{ item.description }}</span>
+            </Option>
+          </Select>
+        </FormItem>
+        <FormItem label="角色分配" prop="roleIds">
+          <Select v-model="roleForm.roleIds" multiple>
+            <Option v-for="item in roleList" :value="item.id" :key="item.id" :label="item.name">
+              <span style="margin-right:10px;">{{ item.name }}</span>
+              <span style="color:#ccc;">{{ item.description }}</span>
+            </Option>
+          </Select>
+        </FormItem>
+        <FormItem label="限次" prop="limitCount">
+          <Input v-model="roleForm.limitCount" />
+        </FormItem>
+        <FormItem label="百分比" prop="percent">
+          <Input v-model="roleForm.percent" />
+        </FormItem>
+        <FormItem label="排序" prop="sortOrder">
+          <Input v-model="roleForm.sortOrder" />
+        </FormItem>
+        <FormItem label="描述" prop="description">
           <Input v-model="roleForm.description" />
         </FormItem>
       </Form>
@@ -61,21 +92,22 @@
         <Button type="primary" :loading="submitLoading" @click="submitSave">提交</Button>
       </div>
     </Modal>
-  
-  
   </div>
 </template>
 
 <script>
 import {
-  addTenement,
-  editTenement,
-  deleteTenement,
-  getTenementListData
+  addTaskType,
+  editTaskType,
+  deleteTaskType,
+  getTaskTypeListData,
+  getAllTypeList,
+  getTaskListData,
+  getAllRoleList
 } from "@/api/index";
 import util from "@/libs/util.js";
 export default {
-  name: "tenement-manage",
+  name: "taskType-manage",
   data() {
     return {
       openTip: true,
@@ -91,12 +123,9 @@ export default {
       modalType: 0,
       modalTitle: "",
       roleForm: {
-        name: "",
         description: ""
       },
-      roleFormValidate: {
-        name: [{ required: true, message: "名称不能为空", trigger: "blur" }]
-      },
+      roleFormValidate: {},
       submitLoading: false,
       selectList: [],
       selectCount: 0,
@@ -112,15 +141,39 @@ export default {
           align: "center"
         },
         {
-          title: "名称",
-          key: "title",
+          title: "任务",
+          key: "taskTitle",
           width: 150,
           sortable: true
         },
         {
-          title: "备注",
-          key: "description",
-          minWidth: 150,
+          title: "分类",
+          key: "typeTitle",
+          width: 150,
+          sortable: true
+        },
+        {
+          title: "限次",
+          key: "limitCount",
+          width: 100,
+          sortable: true
+        },
+        {
+          title: "百分比",
+          key: "percent",
+          width: 100,
+          sortable: true
+        },
+        {
+          title: "排序",
+          key: "sortOrder",
+          width: 100,
+          sortable: true
+        },
+        {
+          title: "角色",
+          key: "roleNames",
+          minWidth: 200,
           sortable: true
         },
         {
@@ -130,18 +183,13 @@ export default {
           sortable: true,
           sortType: "desc"
         },
-        {
-          title: "更新时间",
-          key: "updateTime",
-          width: 170,
-          sortable: true
-        },
+
         {
           title: "操作",
           key: "action",
           align: "center",
           fixed: "right",
-          width: 300,
+          width: 150,
           render: (h, params) => {
             return h("div", [
               h(
@@ -190,12 +238,30 @@ export default {
       depData: [],
       dataType: 0,
       roleModalVisible: false,
-      editDepartments: []
+      editDepartments: [],
+      typeList: [],
+      taskList: [],
+      roleList: []
     };
   },
   methods: {
     init() {
       this.getList();
+      getAllTypeList().then(res => {
+        if (res.success) {
+          this.typeList = res.result;
+        }
+      });
+      getTaskListData().then(res => {
+        if (res.success) {
+          this.taskList = res.result.content;
+        }
+      });
+      getAllRoleList().then(res => {
+        if (res.success) {
+          this.roleList = res.result;
+        }
+      });
     },
     renderContent(h, { root, node, data }) {
       let icon = "";
@@ -257,10 +323,10 @@ export default {
       }
       this.getList();
     },
-     getList() {
+    getList() {
       // 多条件搜索用户列表
       this.loading = true;
-      getTenementListData(this.searchForm).then(res => {
+      getTaskTypeListData(this.searchForm).then(res => {
         this.loading = false;
         if (res.success) {
           this.data = res.result.content;
@@ -268,7 +334,7 @@ export default {
         }
       });
     },
-   cancel() {
+    cancel() {
       this.roleModalVisible = false;
     },
     submitSave() {
@@ -277,7 +343,7 @@ export default {
           if (this.modalType == 0) {
             // 添加
             this.submitLoading = true;
-            addTenement(this.roleForm).then(res => {
+            addTaskType(this.roleForm).then(res => {
               this.submitLoading = false;
               if (res.success) {
                 this.$Message.success("操作成功");
@@ -287,7 +353,7 @@ export default {
             });
           } else {
             this.submitLoading = true;
-            editTenement(this.roleForm).then(res => {
+            editTaskType(this.roleForm).then(res => {
               this.submitLoading = false;
               if (res.success) {
                 this.$Message.success("操作成功");
@@ -299,7 +365,7 @@ export default {
         }
       });
     },
-    addTenement() {
+    add() {
       this.modalType = 0;
       this.modalTitle = "添加";
       this.$refs.roleForm.resetFields();
@@ -324,10 +390,10 @@ export default {
     remove(v) {
       this.$Modal.confirm({
         title: "确认删除",
-        content: "您确认要删除 " + v.title + " ?",
+        content: "您确认要删除 ?",
         loading: true,
         onOk: () => {
-          deleteTenement({ids: v.id}).then(res => {
+          deleteTaskType({ ids: v.id }).then(res => {
             this.$Modal.remove();
             if (res.success) {
               this.$Message.success("删除成功");
@@ -337,8 +403,7 @@ export default {
         }
       });
     },
-  
-   
+
     clearSelectAll() {
       this.$refs.table.selectAll(false);
     },
@@ -361,7 +426,7 @@ export default {
             ids += e.id + ",";
           });
           ids = ids.substring(0, ids.length - 1);
-          deleteTenement({ids: ids}).then(res => {
+          deleteTaskType({ ids: ids }).then(res => {
             this.$Modal.remove();
             if (res.success) {
               this.$Message.success("删除成功");
@@ -372,7 +437,7 @@ export default {
         }
       });
     },
-  
+
     // 全选反选
     selectTreeAll() {
       this.selectAllFlag = !this.selectAllFlag;
@@ -388,8 +453,38 @@ export default {
           that.selectedTreeAll(e.children, select);
         }
       });
+    },
+
+
+   setCurrentValue(value) {
+      if (value === this.visible) {
+        return;
+      }
+      
+      // 清空数据
+      this.$refs.form.resetFields();
+         // 回显数据
+        let data = this.data;    
+        // 角色
+        let selectRolesId = [];
+        data.roles.forEach(function(e) {
+          selectRolesId.push(e.id);
+        });
+        data.roleIds = selectRolesId;
+        delete data.roles;
+        // 回显
+        this.form = data;
+        this.visible = value;
+
     }
-  
+  },
+  watch: {
+    value(val) {
+      this.setCurrentValue(val);
+    },
+    visible(value) {
+      this.$emit("input", value);
+    }
   },
   mounted() {
     this.init();

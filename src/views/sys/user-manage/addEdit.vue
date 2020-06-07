@@ -53,8 +53,8 @@
           </Row>
           <Row :gutter="32">
             <Col span="12">
-              <FormItem label="用户名" prop="nickname">
-                <Input v-model="form.nickname" />
+              <FormItem label="用户名" prop="nickName">
+                <Input v-model="form.nickName" />
               </FormItem>
             </Col>
             <Col span="12">
@@ -210,7 +210,7 @@ export default {
           { required: true, message: "请输入登录账号", trigger: "blur" },
           { validator: validateUsername, trigger: "blur" }
         ],
-        nickname: [
+        nickName: [
           { required: true, message: "请输入用户名", trigger: "blur" }
         ],
         mobile: [

@@ -1,12 +1,12 @@
 <style lang="less">
 @import "../../../styles/table-common.less";
-@import "./tenementManage.less";
+@import "./courtManage.less";
 </style>
 <template>
   <div class="search">
     <Card>
       <Row class="operation">
-        <Button @click="addTenement" type="primary" icon="md-add">添加物业</Button>
+        <Button @click="addCourt" type="primary" icon="md-add">添加小区</Button>
         <Button @click="delAll" icon="md-trash">批量删除</Button>
         <Button @click="init" icon="md-refresh">刷新</Button>
         <Button type="dashed" @click="openTip=!openTip">{{openTip ? "关闭提示" : "开启提示"}}</Button>
@@ -68,14 +68,14 @@
 
 <script>
 import {
-  addTenement,
-  editTenement,
-  deleteTenement,
-  getTenementListData
+  addCourt,
+  editCourt,
+  deleteCourt,
+  getCourtListData
 } from "@/api/index";
 import util from "@/libs/util.js";
 export default {
-  name: "tenement-manage",
+  name: "court-manage",
   data() {
     return {
       openTip: true,
@@ -260,7 +260,7 @@ export default {
      getList() {
       // 多条件搜索用户列表
       this.loading = true;
-      getTenementListData(this.searchForm).then(res => {
+      getCourtListData(this.searchForm).then(res => {
         this.loading = false;
         if (res.success) {
           this.data = res.result.content;
@@ -277,7 +277,7 @@ export default {
           if (this.modalType == 0) {
             // 添加
             this.submitLoading = true;
-            addTenement(this.roleForm).then(res => {
+            addCourt(this.roleForm).then(res => {
               this.submitLoading = false;
               if (res.success) {
                 this.$Message.success("操作成功");
@@ -287,7 +287,7 @@ export default {
             });
           } else {
             this.submitLoading = true;
-            editTenement(this.roleForm).then(res => {
+            editCourt(this.roleForm).then(res => {
               this.submitLoading = false;
               if (res.success) {
                 this.$Message.success("操作成功");
@@ -299,7 +299,7 @@ export default {
         }
       });
     },
-    addTenement() {
+    addCourt() {
       this.modalType = 0;
       this.modalTitle = "添加";
       this.$refs.roleForm.resetFields();
@@ -327,7 +327,7 @@ export default {
         content: "您确认要删除 " + v.title + " ?",
         loading: true,
         onOk: () => {
-          deleteTenement({ids: v.id}).then(res => {
+          deleteCourt({ids: v.id}).then(res => {
             this.$Modal.remove();
             if (res.success) {
               this.$Message.success("删除成功");
@@ -361,7 +361,7 @@ export default {
             ids += e.id + ",";
           });
           ids = ids.substring(0, ids.length - 1);
-          deleteTenement({ids: ids}).then(res => {
+          deleteCourt({ids: ids}).then(res => {
             this.$Modal.remove();
             if (res.success) {
               this.$Message.success("删除成功");

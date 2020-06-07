@@ -25,6 +25,8 @@ import VueLazyload from 'vue-lazyload'
 import VueClipboard from 'vue-clipboard2'
 import VueApexCharts from 'vue-apexcharts'
 import '@babel/polyfill'
+import quillEditor from 'vue-quill-editor' 
+import 'quill/dist/quill.snow.css'  // 富文本编辑器外部引用样式  三种样式三选一引入即可
 
 Vue.config.productionTip = false
 Vue.use(VueLazyload, {
@@ -41,6 +43,7 @@ Vue.use(hasPermission);
 Vue.use(hasRole);
 Vue.use(iviewArea);
 Vue.use(VueApexCharts)
+Vue.use(quillEditor)
 Vue.component('apexchart', VueApexCharts)
 // 挂载全局使用的方法
 Vue.prototype.getRequest = getRequest;

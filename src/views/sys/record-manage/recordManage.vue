@@ -1,12 +1,12 @@
 <style lang="less">
 @import "../../../styles/table-common.less";
-@import "./tenementManage.less";
+@import "./recordManage.less";
 </style>
 <template>
   <div class="search">
     <Card>
       <Row class="operation">
-        <Button @click="addTenement" type="primary" icon="md-add">添加物业</Button>
+        <Button @click="add" type="primary" icon="md-add">添加</Button>
         <Button @click="delAll" icon="md-trash">批量删除</Button>
         <Button @click="init" icon="md-refresh">刷新</Button>
         <Button type="dashed" @click="openTip=!openTip">{{openTip ? "关闭提示" : "开启提示"}}</Button>
@@ -46,14 +46,56 @@
       </Row>
     </Card>
 
-    <!-- 编辑 -->
+    <!-- 添加和编辑 -->
     <Modal :title="modalTitle" v-model="roleModalVisible" :mask-closable="false" :width="500">
       <Form ref="roleForm" :model="roleForm" :label-width="80" :rules="roleFormValidate">
         <FormItem label="名称" prop="title">
           <Input v-model="roleForm.title" placeholder="请输入名称" />
         </FormItem>
-        <FormItem label="备注" prop="description">
-          <Input v-model="roleForm.description" />
+
+        <FormItem label="小区" prop="courtId">
+          <Select v-model="roleForm.courtId">
+            <Option v-for="item in courtList" :value="item.id" :key="item.id" :label="item.title">
+              <span style="margin-right:10px;">{{ item.title }}</span>
+              <span style="color:#ccc;">{{ item.description }}</span>
+            </Option>
+          </Select>
+        </FormItem>
+
+        <FormItem label="物业" prop="tenementId">
+          <Select v-model="roleForm.tenementId">
+            <Option
+              v-for="item in tenementList"
+              :value="item.id"
+              :key="item.id"
+              :label="item.title"
+            >
+              <span style="margin-right:10px;">{{ item.title }}</span>
+              <span style="color:#ccc;">{{ item.description }}</span>
+            </Option>
+          </Select>
+        </FormItem>
+
+        <FormItem label="分类" prop="typeId">
+          <Select v-model="roleForm.typeId">
+            <Option v-for="item in typeList" :value="item.id" :key="item.id" :label="item.title">
+              <span style="margin-right:10px;">{{ item.title }}</span>
+              <span style="color:#ccc;">{{ item.description }}</span>
+            </Option>
+          </Select>
+        </FormItem>
+
+        <FormItem label="任务" prop="taskId">
+          <Select v-model="roleForm.taskId">
+            <Option v-for="item in taskList" :value="item.id" :key="item.id" :label="item.title">
+              <span style="margin-right:10px;">{{ item.title }}</span>
+              <span style="color:#ccc;">{{ item.description }}</span>
+            </Option>
+          </Select>
+        </FormItem>
+
+        <FormItem label="得分" prop="score">
+          <Input v-model="roleForm.score" />
         </FormItem>
       </Form>
       <div slot="footer">
@@ -61,21 +103,23 @@
         <Button type="primary" :loading="submitLoading" @click="submitSave">提交</Button>
       </div>
     </Modal>
-  
-  
   </div>
 </template>
 
 <script>
 import {
-  addTenement,
-  editTenement,
-  deleteTenement,
+  addRecord,
+  editRecord,
+  deleteRecord,
+  getRecordListData,
+  getAllTypeList,
+  getTaskListData,
+  getCourtListData,
   getTenementListData
 } from "@/api/index";
 import util from "@/libs/util.js";
 export default {
-  name: "tenement-manage",
+  name: "task-manage",
   data() {
     return {
       openTip: true,
@@ -118,8 +162,26 @@ export default {
           sortable: true
         },
         {
-          title: "备注",
-          key: "description",
+          title: "小区",
+          key: "courtTitle",
+          width: 150,
+          sortable: true
+        },
+        {
+          title: "物业",
+          key: "tenementTitle",
+          minWidth: 150,
+          sortable: true
+        },
+           {
+          title: "分类",
+          key: "typeTitle",
+          minWidth: 150,
+          sortable: true
+        },
+           {
+          title: "任务",
+          key: "taskTitle",
           minWidth: 150,
           sortable: true
         },
@@ -190,12 +252,36 @@ export default {
       depData: [],
       dataType: 0,
       roleModalVisible: false,
-      editDepartments: []
+      editDepartments: [],
+      courtList: [],
+      tenementList: [],
+      taskList: [],
+      typeList: []
     };
   },
   methods: {
     init() {
       this.getList();
+      getAllTypeList().then(res => {
+        if (res.success) {
+          this.typeList = res.result;
+        }
+      });
+      getTaskListData().then(res => {
+        if (res.success) {
+          this.taskList = res.result.content;
+        }
+      });
+      getCourtListData().then(res => {
+        if (res.success) {
+          this.courtList = res.result.content;
+        }
+      });
+      getTenementListData().then(res => {
+        if (res.success) {
+          this.tenementList = res.result.content;
+        }
+      });
     },
     renderContent(h, { root, node, data }) {
       let icon = "";
@@ -257,10 +343,10 @@ export default {
       }
       this.getList();
     },
-     getList() {
+    getList() {
       // 多条件搜索用户列表
       this.loading = true;
-      getTenementListData(this.searchForm).then(res => {
+      getRecordListData(this.searchForm).then(res => {
         this.loading = false;
         if (res.success) {
           this.data = res.result.content;
@@ -268,7 +354,7 @@ export default {
         }
       });
     },
-   cancel() {
+    cancel() {
       this.roleModalVisible = false;
     },
     submitSave() {
@@ -277,7 +363,7 @@ export default {
           if (this.modalType == 0) {
             // 添加
             this.submitLoading = true;
-            addTenement(this.roleForm).then(res => {
+            addRecord(this.roleForm).then(res => {
               this.submitLoading = false;
               if (res.success) {
                 this.$Message.success("操作成功");
@@ -287,7 +373,7 @@ export default {
             });
           } else {
             this.submitLoading = true;
-            editTenement(this.roleForm).then(res => {
+            editRecord(this.roleForm).then(res => {
               this.submitLoading = false;
               if (res.success) {
                 this.$Message.success("操作成功");
@@ -299,7 +385,7 @@ export default {
         }
       });
     },
-    addTenement() {
+    add() {
       this.modalType = 0;
       this.modalTitle = "添加";
       this.$refs.roleForm.resetFields();
@@ -327,7 +413,7 @@ export default {
         content: "您确认要删除 " + v.title + " ?",
         loading: true,
         onOk: () => {
-          deleteTenement({ids: v.id}).then(res => {
+          deleteRecord({ ids: v.id }).then(res => {
             this.$Modal.remove();
             if (res.success) {
               this.$Message.success("删除成功");
@@ -337,8 +423,7 @@ export default {
         }
       });
     },
-  
-   
+
     clearSelectAll() {
       this.$refs.table.selectAll(false);
     },
@@ -361,7 +446,7 @@ export default {
             ids += e.id + ",";
           });
           ids = ids.substring(0, ids.length - 1);
-          deleteTenement({ids: ids}).then(res => {
+          deleteRecord({ ids: ids }).then(res => {
             this.$Modal.remove();
             if (res.success) {
               this.$Message.success("删除成功");
@@ -372,7 +457,7 @@ export default {
         }
       });
     },
-  
+
     // 全选反选
     selectTreeAll() {
       this.selectAllFlag = !this.selectAllFlag;
@@ -389,7 +474,6 @@ export default {
         }
       });
     }
-  
   },
   mounted() {
     this.init();
