@@ -5,6 +5,41 @@
 <template>
   <div class="search">
     <Card>
+      <Row v-show="openSearch" @keydown.enter.native="handleSearch">
+        <Form ref="searchForm" :model="searchForm" inline :label-width="70">
+          <Form-item label="小区" prop="courtId">
+            <Select v-model="searchForm.courtId">
+              <Option
+                v-for="item in courtAllList"
+                :value="item.id"
+                :key="item.id"
+                :label="item.title"
+              >
+                <span style="margin-right:10px;">{{ item.title }}</span>
+                <span style="color:#ccc;">{{ item.description }}</span>
+              </Option>
+            </Select>
+          </Form-item>
+
+          <Form-item label="创建时间">
+            <DatePicker
+              v-model="selectDate"
+              type="daterange"
+              format="yyyy-MM-dd"
+              clearable
+              @on-change="selectDateRange"
+              placeholder="选择起始时间"
+              style="width: 200px"
+            ></DatePicker>
+          </Form-item>
+          <Form-item style="margin-left:-35px;" class="br">
+            <Button @click="handleSearch" type="primary" icon="ios-search">搜索</Button>
+          </Form-item>
+        </Form>
+      </Row>
+    </Card>
+
+    <Card>
       <Row class="operation">
         <Button @click="add" type="primary" icon="md-add">添加</Button>
         <Button @click="delAll" icon="md-trash">批量删除</Button>
@@ -115,7 +150,8 @@ import {
   getAllTypeList,
   getTaskListData,
   getCourtListData,
-  getTenementListData
+  getTenementListData,
+  getCourtAllList
 } from "@/api/index";
 import util from "@/libs/util.js";
 export default {
@@ -123,6 +159,7 @@ export default {
   data() {
     return {
       openTip: true,
+      openSearch: true,
       openLevel: "0",
       loading: true,
       treeLoading: true,
@@ -140,6 +177,23 @@ export default {
       },
       roleFormValidate: {
         name: [{ required: true, message: "名称不能为空", trigger: "blur" }]
+      },
+      searchForm: {
+        id: "",
+        nickName: "",
+        username: "",
+        departmentId: "",
+        mobile: "",
+        email: "",
+        sex: "",
+        type: "",
+        status: "",
+        pageNumber: 1,
+        pageSize: 10,
+        sort: "createTime",
+        order: "desc",
+        startDate: "",
+        endDate: ""
       },
       submitLoading: false,
       selectList: [],
@@ -173,13 +227,13 @@ export default {
           minWidth: 150,
           sortable: true
         },
-           {
+        {
           title: "分类",
           key: "typeTitle",
           minWidth: 150,
           sortable: true
         },
-           {
+        {
           title: "任务",
           key: "taskTitle",
           minWidth: 150,
@@ -256,7 +310,8 @@ export default {
       courtList: [],
       tenementList: [],
       taskList: [],
-      typeList: []
+      typeList: [],
+      courtAllList: []
     };
   },
   methods: {
@@ -277,12 +332,24 @@ export default {
           this.courtList = res.result.content;
         }
       });
+      getCourtAllList().then(res => {
+        if (res.success) {
+          this.courtAllList = res.result;
+        }
+      });
       getTenementListData().then(res => {
         if (res.success) {
           this.tenementList = res.result.content;
         }
       });
     },
+    selectDateRange(v) {
+      if (v) {
+        this.searchForm.startDate = v[0];
+        this.searchForm.endDate = v[1];
+      }
+    },
+
     renderContent(h, { root, node, data }) {
       let icon = "";
       if (data.level == 0) {
@@ -343,6 +410,19 @@ export default {
       }
       this.getList();
     },
+    selectDateRange(v) {
+      if (v) {
+        this.searchForm.startDate = v[0];
+        this.searchForm.endDate = v[1];
+      }
+    },
+
+    handleSearch() {
+      this.searchForm.pageNumber = 1;
+      this.searchForm.pageSize = 10;
+      this.getList();
+    },
+
     getList() {
       // 多条件搜索用户列表
       this.loading = true;

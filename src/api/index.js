@@ -318,7 +318,10 @@ export const editTenement = (params) => {
 export const deleteTenement = (params) => {
     return postRequest('/tenement/delByIds', params)
 }
-
+// 获取小区所有列表
+export const getCourtAllList = () => {
+    return getRequest('/court/getAllList')
+}
 // 获取小区数据
 export const getCourtListData = (params) => {
     return getRequest('/court/getByCondition', params)
