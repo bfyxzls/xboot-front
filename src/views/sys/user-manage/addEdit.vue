@@ -318,8 +318,7 @@ export default {
           selectRolesId.push(e.id);
         });
         data.roleIds = selectRolesId;
-        console.log(data.roles)
-        console.log(selectRolesId)
+      
         delete data.roles;
         delete data.permissions;
         // 密码强度

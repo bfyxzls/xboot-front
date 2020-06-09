@@ -68,7 +68,12 @@
         </FormItem>
         <FormItem label="角色分配" prop="roleIds">
           <Select v-model="roleForm.roleIds" multiple>
-            <Option v-for="item in roleList"  v-bind:value="item.id" :key="item.id" :label="item.name">
+            <Option
+              v-for="item in roleList"
+              v-bind:value="item.id"
+              :key="item.id"
+              :label="item.name"
+            >
               <span style="margin-right:10px;">{{ item.name }}</span>
               <span style="color:#ccc;">{{ item.description }}</span>
             </Option>
@@ -108,19 +113,10 @@ import {
 import util from "@/libs/util.js";
 export default {
   name: "taskType-manage",
-  props: {
-    value: {
-      type: Boolean,
-      default: false
-    },
-    type: {
-      type: String,
-      default: "0"
-    }
-  },
+
   data() {
     return {
-      data:[],
+      data: [],
       openTip: true,
       openLevel: "0",
       loading: true,
@@ -395,6 +391,13 @@ export default {
       let str = JSON.stringify(v);
       let roleInfo = JSON.parse(str);
       this.roleForm = roleInfo;
+
+      //角色复选框的反显
+      let selectRolesId = [];
+      roleInfo.roles.forEach(function(e) {
+        selectRolesId.push(e.id);
+      });
+      this.roleForm.roleIds = selectRolesId;
       this.roleModalVisible = true;
     },
     remove(v) {
@@ -464,9 +467,9 @@ export default {
         }
       });
     },
-     setCurrentValue(value) {
+    setCurrentValue(value) {
       console.log(value);
-      }
+    }
   },
   watch: {
     value(val) {

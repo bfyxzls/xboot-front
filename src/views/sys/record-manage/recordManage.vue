@@ -8,22 +8,16 @@
       <Row v-show="openSearch" @keydown.enter.native="handleSearch">
         <Form ref="searchForm" :model="searchForm" inline :label-width="70">
           <Form-item label="小区" prop="courtId">
-            <Select v-model="searchForm.courtId">
-              <Option
-                v-for="item in courtAllList"
-                :value="item.id"
-                :key="item.id"
-                :label="item.title"
-              >
-                <span style="margin-right:10px;">{{ item.title }}</span>
-                <span style="color:#ccc;">{{ item.description }}</span>
-              </Option>
-            </Select>
+      
+               <Select v-model="searchForm.courtId" placeholder="请选择" clearable style="width: 200px">
+                <Option v-for="(item) in courtAllList" :key="item.id" :value="item.id">{{item.title}}</Option>
+              </Select>
+
+
           </Form-item>
 
           <Form-item label="创建时间">
             <DatePicker
-              v-model="selectDate"
               type="daterange"
               format="yyyy-MM-dd"
               clearable
@@ -156,6 +150,7 @@ import {
 import util from "@/libs/util.js";
 export default {
   name: "task-manage",
+
   data() {
     return {
       openTip: true,
