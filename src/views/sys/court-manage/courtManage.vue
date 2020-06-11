@@ -5,6 +5,31 @@
 <template>
   <div class="search">
     <Card>
+      <Form ref="searchForm" :model="searchForm" inline :label-width="70">
+          <Form-item label="名称" prop="title">
+            <Input
+              type="text"
+              v-model="searchForm.title"
+              clearable
+              placeholder="请输入名称"
+              style="width: 200px"
+            />
+          </Form-item>
+          <Form-item label="创建时间">
+            <DatePicker
+              type="daterange"
+              format="yyyy-MM-dd"
+              clearable
+              @on-change="selectDateRange"
+              placeholder="选择起始时间"
+              style="width: 200px"
+            ></DatePicker>
+          </Form-item>
+          <Form-item style="margin-left:-35px;" class="br">
+            <Button @click="handleSearch" type="primary" icon="ios-search">搜索</Button>
+          </Form-item>
+        </Form>
+
       <Row class="operation">
         <Button @click="addCourt" type="primary" icon="md-add">添加小区</Button>
         <Button @click="delAll" icon="md-trash">批量删除</Button>
@@ -96,6 +121,12 @@ export default {
       },
       roleFormValidate: {
         name: [{ required: true, message: "名称不能为空", trigger: "blur" }]
+      },
+       searchForm: {
+        id: "",
+        title:"",
+        startDate: "",
+        endDate: ""
       },
       submitLoading: false,
       selectList: [],
@@ -197,6 +228,19 @@ export default {
     init() {
       this.getList();
     },
+
+
+    handleSearch() {
+      this.searchForm.pageNumber = 1;
+      this.searchForm.pageSize = 10;
+      this.getList();
+    },selectDateRange(v) {
+      if (v) {
+        this.searchForm.startDate = v[0];
+        this.searchForm.endDate = v[1];
+      }
+    },
+
     renderContent(h, { root, node, data }) {
       let icon = "";
       if (data.level == 0) {

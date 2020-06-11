@@ -1,17 +1,9 @@
 <template>
   <div class="foot">
-    <Row type="flex" justify="space-around" class="help">
-      <a class="item" href="https://github.com/Exrick/x-boot" target="_blank">{{ $t('help') }}</a>
-      <a class="item" href="https://github.com/Exrick/x-boot" target="_blank">{{ $t('privacy') }}</a>
-      <a class="item" href="https://github.com/Exrick/x-boot" target="_blank">{{ $t('terms') }}</a>
-    </Row>
+
     <Row type="flex" justify="center" class="copyright">
-      Copyright © 2018 - Present
-      <a
-        href="http://exrick.cn"
-        target="_blank"
-        style="margin:0 5px;"
-      >Exrick</a>
+      Copyright © 2020 - Present
+      
       {{ $t('rights') }}
     </Row>
   </div>

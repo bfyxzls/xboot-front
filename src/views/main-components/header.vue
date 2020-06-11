@@ -1,8 +1,7 @@
 <template>
   <div>
     <Row class="header">
-      <img src="../../assets/xboot.png" width="220px">
-      <div class="description">{{ $t('xboot') }}</div>
+      <div class="description">小区物业评价系统</div>
     </Row>
   </div>
 </template>

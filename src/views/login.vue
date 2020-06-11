@@ -68,46 +68,7 @@
                   </FormItem>
                 </Form>
               </TabPane>
-              <TabPane :label="$t('mobileLogin')" name="mobile" icon="ios-phone-portrait">
-                <Form
-                  ref="mobileLoginForm"
-                  :model="form"
-                  :rules="rules"
-                  class="form"
-                  v-if="tabName=='mobile'"
-                >
-                  <FormItem prop="mobile">
-                    <Input
-                      v-model="form.mobile"
-                      prefix="ios-phone-portrait"
-                      size="large"
-                      clearable
-                      placeholder="请输入手机号"
-                    />
-                  </FormItem>
-                  <FormItem prop="code" :error="errorCode">
-                    <Row type="flex" justify="space-between">
-                      <Input
-                        v-model="form.code"
-                        prefix="ios-mail-outline"
-                        size="large"
-                        clearable
-                        placeholder="请输入短信验证码"
-                        :maxlength="6"
-                        class="input-verify"
-                      />
-                      <CountDownButton
-                        ref="countDown"
-                        @on-click="sendSmsCode"
-                        :autoCountDown="false"
-                        size="large"
-                        :loading="sending"
-                        :text="getSms"
-                      />
-                    </Row>
-                  </FormItem>
-                </Form>
-              </TabPane>
+              
             </Tabs>
 
             <Row type="flex" justify="space-between" align="middle">
@@ -134,21 +95,7 @@
               </Button>
             </Row>
             <Row type="flex" justify="space-between" class="other-login">
-              <div class="other-way icons">
-                {{ $t('otherLogin') }}
-                <div class="other-icon" @click="toGithubLogin">
-                  <icon scale="1.3" name="brands/github"></icon>
-                </div>
-                <div class="other-icon" @click="toQQLogin">
-                  <icon scale="1.2" name="brands/qq"></icon>
-                </div>
-                <div class="other-icon" @click="toWeixinLogin">
-                  <icon scale="1.3" name="brands/weixin"></icon>
-                </div>
-                <div class="other-icon" @click="toWeiboLogin">
-                  <icon scale="1.3" name="brands/weibo"></icon>
-                </div>
-              </div>
+              
               <router-link to="/regist">
                 <a class="forget-pass">{{ $t('regist') }}</a>
               </router-link>
@@ -191,8 +138,8 @@ export default {
       sending: false,
       errorCode: "",
       form: {
-        username: "admin、test、test2（支持邮箱/手机登录）",
-        password: "123456",
+        username: "",
+        password: "",
         mobile: "",
         code: ""
       },

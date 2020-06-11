@@ -5,15 +5,11 @@
 <template>
   <div class="search">
     <Card>
-      <Row v-show="openSearch" @keydown.enter.native="handleSearch">
         <Form ref="searchForm" :model="searchForm" inline :label-width="70">
           <Form-item label="小区" prop="courtId">
-      
                <Select v-model="searchForm.courtId" placeholder="请选择" clearable style="width: 200px">
                 <Option v-for="(item) in courtAllList" :key="item.id" :value="item.id">{{item.title}}</Option>
               </Select>
-
-
           </Form-item>
 
           <Form-item label="创建时间">
@@ -30,10 +26,7 @@
             <Button @click="handleSearch" type="primary" icon="ios-search">搜索</Button>
           </Form-item>
         </Form>
-      </Row>
-    </Card>
-
-    <Card>
+   
       <Row class="operation">
         <Button @click="add" type="primary" icon="md-add">添加</Button>
         <Button @click="delAll" icon="md-trash">批量删除</Button>
