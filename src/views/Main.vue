@@ -40,7 +40,7 @@
           <div class="main-nav-menu" v-if="navType==1||navType==2">
             <Menu mode="horizontal" :active-name="currNav" @on-select="selectNav">
               <MenuItem v-for="(item, i) in navList.slice(0, sliceNum)" :key="i" :name="item.name">
-               小区物业评价系统
+               小区物业服务结合评价系统
               </MenuItem>
               <Submenu name="sub" v-if="navList.length>sliceNum">
                 <template slot="title">更多</template>

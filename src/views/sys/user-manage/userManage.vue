@@ -282,38 +282,9 @@ export default {
         },
         {
           title: "类型",
-          key: "type",
+          key: "typeTitle",
           align: "center",
-          width: 100,
-          render: (h, params) => {
-            let re = "";
-            if (params.row.type == 1) {
-              re = "管理员";
-            } else if (params.row.type == 0) {
-              re = "普通用户";
-            }
-            return h("div", re);
-          },
-          filters: [
-            {
-              label: "普通用户",
-              value: 0
-            },
-            {
-              label: "管理员",
-              value: 1
-            }
-          ],
-          filterMultiple: false,
-          filterRemote: e => {
-            let v = "";
-            if (e.length > 0) {
-              v = e[0];
-            }
-            this.searchForm.type = v;
-            this.searchForm.pageNumber = 1;
-            this.getUserList();
-          }
+          width: 100
         },
         {
           title: "状态",
@@ -507,7 +478,8 @@ export default {
       data: [],
       exportData: [],
       total: 0,
-      dictSex: this.$store.state.dict.sex
+      dictSex: this.$store.state.dict.sex,
+      dicUserType: this.$store.state.dict.userType
     };
   },
   methods: {

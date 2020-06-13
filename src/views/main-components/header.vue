@@ -1,7 +1,7 @@
 <template>
   <div>
     <Row class="header">
-      <div class="description">小区物业评价系统</div>
+      <div class="description">小区物业服务结合评价系统</div>
     </Row>
   </div>
 </template>

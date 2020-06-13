@@ -201,8 +201,6 @@ export default {
       },
       typeList: [],
       formValidate: {
-        title: [{ required: true, message: "名称不能为空", trigger: "blur" }],
-        content: [{ required: true, message: "内容不能为空", trigger: "click" }]
       },
       submitLoading: false,
       data: [],

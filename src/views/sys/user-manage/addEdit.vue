@@ -88,10 +88,13 @@
               </FormItem>
             </Col>
             <Col span="12">
-              <FormItem label="用户类型">
-                <Select v-model="form.type" placeholder="请选择">
-                  <Option :value="0">普通用户</Option>
-                  <Option :value="1">管理员</Option>
+             <FormItem label="类型">
+                <Select v-model="form.type">
+                  <Option
+                    v-for="(item, i) in this.$store.state.dict.userType"
+                    :key="i"
+                    :value="item.value"
+                  >{{item.title}}</Option>
                 </Select>
               </FormItem>
             </Col>

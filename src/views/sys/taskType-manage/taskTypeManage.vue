@@ -5,6 +5,39 @@
 <template>
   <div class="search">
     <Card>
+      <Form ref="searchForm" :model="searchForm" inline :label-width="70">
+          <Form-item label="任务" prop="taskTitle">
+            <Input
+              type="text"
+              v-model="searchForm.taskTitle"
+              clearable
+              placeholder="请输入任务名称"
+              style="width: 200px"
+            />
+          </Form-item>
+          <Form-item label="分类" prop="typeTitle">
+            <Input
+              type="text"
+              v-model="searchForm.typeTitle"
+              clearable
+              placeholder="请输入分类名称"
+              style="width: 200px"
+            />
+          </Form-item>
+          <Form-item label="创建时间">
+            <DatePicker
+              type="daterange"
+              format="yyyy-MM-dd"
+              clearable
+              @on-change="selectDateRange"
+              placeholder="选择起始时间"
+              style="width: 200px"
+            ></DatePicker>
+          </Form-item>
+          <Form-item style="margin-left:-35px;" class="br">
+            <Button @click="handleSearch" type="primary" icon="ios-search">搜索</Button>
+          </Form-item>
+        </Form>
       <Row class="operation">
         <Button @click="add" type="primary" icon="md-add">添加</Button>
         <Button @click="delAll" icon="md-trash">批量删除</Button>
@@ -132,6 +165,14 @@ export default {
       roleForm: {
         description: ""
       },
+       searchForm: {
+        id: "",
+        title:"",
+        taskTitle:"",
+        typeTitle:"",
+        startDate: "",
+        endDate: ""
+      },
       roleFormValidate: {},
       submitLoading: false,
       selectList: [],
@@ -258,6 +299,7 @@ export default {
           this.typeList = res.result;
         }
       });
+      
       getTaskListData().then(res => {
         if (res.success) {
           this.taskList = res.result.content;
@@ -268,6 +310,17 @@ export default {
           this.roleList = res.result;
         }
       });
+    },
+
+    handleSearch() {
+      this.searchForm.pageNumber = 1;
+      this.searchForm.pageSize = 10;
+      this.getList();
+    },selectDateRange(v) {
+      if (v) {
+        this.searchForm.startDate = v[0];
+        this.searchForm.endDate = v[1];
+      }
     },
     renderContent(h, { root, node, data }) {
       let icon = "";
