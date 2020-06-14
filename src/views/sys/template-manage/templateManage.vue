@@ -139,6 +139,17 @@
         <FormItem label="排序" prop="sortOrder">
           <Input v-model="formAdd.sortOrder" />
         </FormItem>
+
+         <FormItem label="类型" prop="questionType">
+          <Select v-model="formAdd.questionType">
+                  <Option
+                    v-for="(item, i) in this.$store.state.dict.questionType"
+                    :key="i"
+                    :value="item.value"
+                  >{{item.title}}</Option>
+                </Select>
+        </FormItem>
+
       </Form>
       <div slot="footer">
         <Button type="text" @click="menuModalVisible = false">取消</Button>

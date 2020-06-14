@@ -18,6 +18,12 @@ dictUtil.initDictData = function (vm) {
             vm.$store.commit("setUserType", res.result);
         }
     });
+
+    axios.get(getDictData + "questionType").then(res => {
+        if(res.success){
+            vm.$store.commit("setQuestionType", res.result);
+        }
+    });
 };
 
 export default dictUtil;

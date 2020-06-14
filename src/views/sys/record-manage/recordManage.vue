@@ -245,7 +245,7 @@ export default {
           key: "action",
           align: "center",
           fixed: "right",
-          width: 300,
+          width: 350,
           render: (h, params) => {
             return h("div", [
               h(
@@ -279,6 +279,20 @@ export default {
                   }
                 },
                 "删除"
+              ),
+               h(
+                "Button",
+                {
+                  props: {
+                    size: "small"
+                  },
+                  on: {
+                    click: () => {
+                      this.audit(params.row);
+                    }
+                  }
+                },
+                "审核"
               )
             ]);
           }
@@ -463,6 +477,21 @@ export default {
     edit(v) {
       this.modalType = 1;
       this.modalTitle = "编辑";
+      this.$refs.roleForm.resetFields();
+      // 转换null为""
+      for (let attr in v) {
+        if (v[attr] == null) {
+          v[attr] = "";
+        }
+      }
+      let str = JSON.stringify(v);
+      let roleInfo = JSON.parse(str);
+      this.roleForm = roleInfo;
+      this.roleModalVisible = true;
+    },
+      autdit(v) {
+      this.modalType = 1;
+      this.modalTitle = "审核";
       this.$refs.roleForm.resetFields();
       // 转换null为""
       for (let attr in v) {
