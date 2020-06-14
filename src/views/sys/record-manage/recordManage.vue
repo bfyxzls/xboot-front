@@ -5,28 +5,28 @@
 <template>
   <div class="search">
     <Card>
-        <Form ref="searchForm" :model="searchForm" inline :label-width="70">
-          <Form-item label="小区" prop="courtId">
-               <Select v-model="searchForm.courtId" placeholder="请选择" clearable style="width: 200px">
-                <Option v-for="(item) in courtAllList" :key="item.id" :value="item.id">{{item.title}}</Option>
-              </Select>
-          </Form-item>
+      <Form ref="searchForm" :model="searchForm" inline :label-width="70">
+        <Form-item label="小区" prop="courtId">
+          <Select v-model="searchForm.courtId" placeholder="请选择" clearable style="width: 200px">
+            <Option v-for="(item) in courtAllList" :key="item.id" :value="item.id">{{item.title}}</Option>
+          </Select>
+        </Form-item>
 
-          <Form-item label="创建时间">
-            <DatePicker
-              type="daterange"
-              format="yyyy-MM-dd"
-              clearable
-              @on-change="selectDateRange"
-              placeholder="选择起始时间"
-              style="width: 200px"
-            ></DatePicker>
-          </Form-item>
-          <Form-item style="margin-left:-35px;" class="br">
-            <Button @click="handleSearch" type="primary" icon="ios-search">搜索</Button>
-          </Form-item>
-        </Form>
-   
+        <Form-item label="创建时间">
+          <DatePicker
+            type="daterange"
+            format="yyyy-MM-dd"
+            clearable
+            @on-change="selectDateRange"
+            placeholder="选择起始时间"
+            style="width: 200px"
+          ></DatePicker>
+        </Form-item>
+        <Form-item style="margin-left:-35px;" class="br">
+          <Button @click="handleSearch" type="primary" icon="ios-search">搜索</Button>
+        </Form-item>
+      </Form>
+
       <Row class="operation">
         <Button @click="add" type="primary" icon="md-add">添加</Button>
         <Button @click="delAll" icon="md-trash">批量删除</Button>
@@ -70,12 +70,21 @@
 
     <!-- 添加和编辑 -->
     <Modal :title="modalTitle" v-model="roleModalVisible" :mask-closable="false" :width="500">
-      <Form ref="roleForm" :model="roleForm" :label-width="80" :rules="roleFormValidate">   
-        <FormItem label="得分" prop="score" v-for="(item, i) in dictSex" :key="i"  >
+      <Form :label-width="80">
+        <div
+          v-for="(item, i) in recordDetailList"
+          :key="i"
+          style="border-bottom:1px dashed #aaa;padding:5px;"
+        >
+          <b>{{i+1}}.</b>
           {{item.templateTitle}}
-          <Input v-model="roleForm.score"  :value="item.score" />
-        </FormItem>
+          <Input v-model="item.score" :value="item.score" style="width:50px" name="score" />
+          <div style="display:none">
+          <Input v-model="item.id" :value="item.id" name="id" />
+          </div>
+        </div>
       </Form>
+
       <div slot="footer">
         <Button type="text" @click="cancel">取消</Button>
         <Button type="primary" :loading="submitLoading" @click="submitSave">提交</Button>
@@ -95,7 +104,8 @@ import {
   getCourtListData,
   getTenementListData,
   getCourtAllList,
-  getRecordDetailList
+  getRecordDetailList,
+  updateRecordDetailList
 } from "@/api/index";
 import util from "@/libs/util.js";
 export default {
@@ -155,8 +165,8 @@ export default {
           align: "center"
         },
         {
-          title: "名称",
-          key: "title",
+          title: "分数",
+          key: "score",
           width: 150,
           sortable: true
         },
@@ -236,20 +246,6 @@ export default {
                   }
                 },
                 "删除"
-              ),
-               h(
-                "Button",
-                {
-                  props: {
-                    size: "small"
-                  },
-                  on: {
-                    click: () => {
-                      this.audit(params.row);
-                    }
-                  }
-                },
-                "审核"
               )
             ]);
           }
@@ -271,7 +267,7 @@ export default {
       taskList: [],
       typeList: [],
       courtAllList: [],
-      recordDetailList:[]
+      recordDetailList: []
     };
   },
   methods: {
@@ -302,12 +298,6 @@ export default {
           this.tenementList = res.result.content;
         }
       });
-      getRecordDetailList().then(res => {
-        if (res.success) {
-          this.tenementList = res.result;
-        }
-      });
-      
     },
     selectDateRange(v) {
       if (v) {
@@ -404,30 +394,22 @@ export default {
       this.roleModalVisible = false;
     },
     submitSave() {
-      this.$refs.roleForm.validate(valid => {
-        if (valid) {
-          if (this.modalType == 0) {
-            // 添加
-            this.submitLoading = true;
-            addRecord(this.roleForm).then(res => {
-              this.submitLoading = false;
-              if (res.success) {
-                this.$Message.success("操作成功");
-                this.getList();
-                this.roleModalVisible = false;
-              }
-            });
-          } else {
-            this.submitLoading = true;
-            editRecord(this.roleForm).then(res => {
-              this.submitLoading = false;
-              if (res.success) {
-                this.$Message.success("操作成功");
-                this.getList();
-                this.roleModalVisible = false;
-              }
-            });
-          }
+      this.submitLoading = true;
+      let result = "";
+      for (var s in this.recordDetailList) {
+        result =
+          result +
+          this.recordDetailList[s].id +
+          "_" +
+          this.recordDetailList[s].score +
+          "|";
+      }
+      updateRecordDetailList({ recordDetails: result }).then(res => {
+        this.submitLoading = false;
+        if (res.success) {
+          this.$Message.success("操作成功");
+          this.getList();
+          this.roleModalVisible = false;
         }
       });
     },
@@ -441,7 +423,7 @@ export default {
     edit(v) {
       this.modalType = 1;
       this.modalTitle = "编辑";
-      this.$refs.roleForm.resetFields();
+      //   this.$refs.roleForm.resetFields();
       // 转换null为""
       for (let attr in v) {
         if (v[attr] == null) {
@@ -450,24 +432,15 @@ export default {
       }
       let str = JSON.stringify(v);
       let roleInfo = JSON.parse(str);
-      this.roleForm = roleInfo;
-      this.roleModalVisible = true;
-    },
-      autdit(v) {
-      this.modalType = 1;
-      this.modalTitle = "审核";
-      this.$refs.roleForm.resetFields();
-      // 转换null为""
-      for (let attr in v) {
-        if (v[attr] == null) {
-          v[attr] = "";
+      getRecordDetailList({ recordId: roleInfo.id }).then(res => {
+        if (res.success) {
+          this.recordDetailList = res.result;
         }
-      }
-      let str = JSON.stringify(v);
-      let roleInfo = JSON.parse(str);
+      });
       this.roleForm = roleInfo;
       this.roleModalVisible = true;
     },
+  
     remove(v) {
       this.$Modal.confirm({
         title: "确认删除",

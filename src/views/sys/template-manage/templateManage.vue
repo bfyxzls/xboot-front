@@ -27,6 +27,7 @@
           <span slot="close">单选</span>
         </i-switch>
       </Row>
+      <!-- 编辑 -->
       <Row type="flex" justify="start">
         <Col :md="8" :lg="8" :xl="6">
           <Alert show-icon>
@@ -80,6 +81,16 @@
               <Input v-model="form.sortOrder" />
             </FormItem>
 
+            <FormItem label="类型" prop="questionType">
+              <Select v-model="form.questionType">
+                <Option
+                  v-for="(item, i) in this.$store.state.dict.questionType"
+                  :key="i"
+                  :value="item.value"
+                >{{item.title}}</Option>
+              </Select>
+
+            </FormItem>
             <Form-item>
               <Button
                 style="margin-right:5px"
@@ -103,6 +114,7 @@
       :width="500"
       :styles="{top: '30px'}"
     >
+      <!-- 添加 -->
       <Form ref="formAdd" :model="formAdd" :label-width="100" :rules="formValidate" width="100%">
         <div v-if="showParent">
           <FormItem label="上级节点：">{{parentTitle}}</FormItem>
@@ -140,16 +152,15 @@
           <Input v-model="formAdd.sortOrder" />
         </FormItem>
 
-         <FormItem label="类型" prop="questionType">
+        <FormItem label="类型" prop="questionType">
           <Select v-model="formAdd.questionType">
-                  <Option
-                    v-for="(item, i) in this.$store.state.dict.questionType"
-                    :key="i"
-                    :value="item.value"
-                  >{{item.title}}</Option>
-                </Select>
+            <Option
+              v-for="(item, i) in this.$store.state.dict.questionType"
+              :key="i"
+              :value="item.value"
+            >{{item.title}}</Option>
+          </Select>
         </FormItem>
-
       </Form>
       <div slot="footer">
         <Button type="text" @click="menuModalVisible = false">取消</Button>
@@ -197,8 +208,10 @@ export default {
         level: 0,
         status: 0,
         url: "",
-        showAlways: true
+        showAlways: true,
+        questionType: 0
       },
+     
       editorOption: {
         modules: {
           toolbar: [
@@ -211,8 +224,7 @@ export default {
         buttonType: ""
       },
       typeList: [],
-      formValidate: {
-      },
+      formValidate: {},
       submitLoading: false,
       data: [],
       dictPermissions: []
@@ -350,6 +362,8 @@ export default {
         let str = JSON.stringify(v[0]);
         let menu = JSON.parse(str);
         this.form = menu;
+
+        this.form.questionType=String(menu.questionType);
         this.editTitle = menu.title;
       } else {
         this.cancelEdit();
