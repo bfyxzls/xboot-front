@@ -428,3 +428,8 @@ export const editTaskType = (params) => {
 export const deleteTaskType = (params) => {
     return postRequest('/taskType/delByIds', params)
 }
+
+// 获取评价记录表单
+export const getRecordDetailList = (params) => {
+    return getRequest('/recordDetail/list', params)
+}

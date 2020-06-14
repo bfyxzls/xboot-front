@@ -70,54 +70,10 @@
 
     <!-- 添加和编辑 -->
     <Modal :title="modalTitle" v-model="roleModalVisible" :mask-closable="false" :width="500">
-      <Form ref="roleForm" :model="roleForm" :label-width="80" :rules="roleFormValidate">
-        <FormItem label="名称" prop="title">
-          <Input v-model="roleForm.title" placeholder="请输入名称" />
-        </FormItem>
-
-        <FormItem label="小区" prop="courtId">
-          <Select v-model="roleForm.courtId">
-            <Option v-for="item in courtList" :value="item.id" :key="item.id" :label="item.title">
-              <span style="margin-right:10px;">{{ item.title }}</span>
-              <span style="color:#ccc;">{{ item.description }}</span>
-            </Option>
-          </Select>
-        </FormItem>
-
-        <FormItem label="物业" prop="tenementId">
-          <Select v-model="roleForm.tenementId">
-            <Option
-              v-for="item in tenementList"
-              :value="item.id"
-              :key="item.id"
-              :label="item.title"
-            >
-              <span style="margin-right:10px;">{{ item.title }}</span>
-              <span style="color:#ccc;">{{ item.description }}</span>
-            </Option>
-          </Select>
-        </FormItem>
-
-        <FormItem label="分类" prop="typeId">
-          <Select v-model="roleForm.typeId">
-            <Option v-for="item in typeList" :value="item.id" :key="item.id" :label="item.title">
-              <span style="margin-right:10px;">{{ item.title }}</span>
-              <span style="color:#ccc;">{{ item.description }}</span>
-            </Option>
-          </Select>
-        </FormItem>
-
-        <FormItem label="任务" prop="taskId">
-          <Select v-model="roleForm.taskId">
-            <Option v-for="item in taskList" :value="item.id" :key="item.id" :label="item.title">
-              <span style="margin-right:10px;">{{ item.title }}</span>
-              <span style="color:#ccc;">{{ item.description }}</span>
-            </Option>
-          </Select>
-        </FormItem>
-
-        <FormItem label="得分" prop="score">
-          <Input v-model="roleForm.score" />
+      <Form ref="roleForm" :model="roleForm" :label-width="80" :rules="roleFormValidate">   
+        <FormItem label="得分" prop="score" v-for="(item, i) in dictSex" :key="i"  >
+          {{item.templateTitle}}
+          <Input v-model="roleForm.score"  :value="item.score" />
         </FormItem>
       </Form>
       <div slot="footer">
@@ -138,7 +94,8 @@ import {
   getTaskListData,
   getCourtListData,
   getTenementListData,
-  getCourtAllList
+  getCourtAllList,
+  getRecordDetailList
 } from "@/api/index";
 import util from "@/libs/util.js";
 export default {
@@ -313,7 +270,8 @@ export default {
       tenementList: [],
       taskList: [],
       typeList: [],
-      courtAllList: []
+      courtAllList: [],
+      recordDetailList:[]
     };
   },
   methods: {
@@ -344,6 +302,12 @@ export default {
           this.tenementList = res.result.content;
         }
       });
+      getRecordDetailList().then(res => {
+        if (res.success) {
+          this.tenementList = res.result;
+        }
+      });
+      
     },
     selectDateRange(v) {
       if (v) {
