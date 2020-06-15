@@ -177,12 +177,6 @@ export default {
           sortable: true
         },
         {
-          title: "物业",
-          key: "tenementTitle",
-          minWidth: 150,
-          sortable: true
-        },
-        {
           title: "分类",
           key: "typeTitle",
           minWidth: 150,
@@ -200,12 +194,6 @@ export default {
           width: 170,
           sortable: true,
           sortType: "desc"
-        },
-        {
-          title: "更新时间",
-          key: "updateTime",
-          width: 170,
-          sortable: true
         },
         {
           title: "操作",
