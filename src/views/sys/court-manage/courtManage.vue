@@ -6,29 +6,29 @@
   <div class="search">
     <Card>
       <Form ref="searchForm" :model="searchForm" inline :label-width="70">
-          <Form-item label="名称" prop="title">
-            <Input
-              type="text"
-              v-model="searchForm.title"
-              clearable
-              placeholder="请输入名称"
-              style="width: 200px"
-            />
-          </Form-item>
-          <Form-item label="创建时间">
-            <DatePicker
-              type="daterange"
-              format="yyyy-MM-dd"
-              clearable
-              @on-change="selectDateRange"
-              placeholder="选择起始时间"
-              style="width: 200px"
-            ></DatePicker>
-          </Form-item>
-          <Form-item style="margin-left:-35px;" class="br">
-            <Button @click="handleSearch" type="primary" icon="ios-search">搜索</Button>
-          </Form-item>
-        </Form>
+        <Form-item label="名称" prop="title">
+          <Input
+            type="text"
+            v-model="searchForm.title"
+            clearable
+            placeholder="请输入名称"
+            style="width: 200px"
+          />
+        </Form-item>
+        <Form-item label="创建时间">
+          <DatePicker
+            type="daterange"
+            format="yyyy-MM-dd"
+            clearable
+            @on-change="selectDateRange"
+            placeholder="选择起始时间"
+            style="width: 200px"
+          ></DatePicker>
+        </Form-item>
+        <Form-item style="margin-left:-35px;" class="br">
+          <Button @click="handleSearch" type="primary" icon="ios-search">搜索</Button>
+        </Form-item>
+      </Form>
 
       <Row class="operation">
         <Button @click="addCourt" type="primary" icon="md-add">添加小区</Button>
@@ -77,6 +77,22 @@
         <FormItem label="名称" prop="title">
           <Input v-model="roleForm.title" placeholder="请输入名称" />
         </FormItem>
+        <FormItem label="所属部门">
+          <department-tree-choose @on-change="handleSelectDepTree" ref="depTree"></department-tree-choose>
+        </FormItem>
+        <FormItem label="物业" prop="roleIds">
+          <Select v-model="roleForm.tenementId">
+            <Option
+              v-for="item in tenementList"
+              v-bind:value="item.id"
+              :key="item.id"
+              :label="item.title"
+            >
+              <span style="margin-right:10px;">{{ item.title }}</span>
+              <span style="color:#ccc;">{{ item.description }}</span>
+            </Option>
+          </Select>
+        </FormItem>
         <FormItem label="备注" prop="description">
           <Input v-model="roleForm.description" />
         </FormItem>
@@ -86,8 +102,6 @@
         <Button type="primary" :loading="submitLoading" @click="submitSave">提交</Button>
       </div>
     </Modal>
-  
-  
   </div>
 </template>
 
@@ -96,11 +110,17 @@ import {
   addCourt,
   editCourt,
   deleteCourt,
-  getCourtListData
+  getCourtListData,
+  getAllTenementList
 } from "@/api/index";
 import util from "@/libs/util.js";
+import departmentTreeChoose from "@/views/my-components/xboot/department-tree-choose";
+
 export default {
   name: "court-manage",
+  components: {
+    departmentTreeChoose
+  },
   data() {
     return {
       openTip: true,
@@ -122,9 +142,9 @@ export default {
       roleFormValidate: {
         name: [{ required: true, message: "名称不能为空", trigger: "blur" }]
       },
-       searchForm: {
+      searchForm: {
         id: "",
-        title:"",
+        title: "",
         startDate: "",
         endDate: ""
       },
@@ -145,6 +165,18 @@ export default {
         {
           title: "名称",
           key: "title",
+          width: 150,
+          sortable: true
+        },
+          {
+          title: "机构",
+          key: "departmentTitle",
+          width: 150,
+          sortable: true
+        },
+          {
+          title: "物业",
+          key: "tenementTitle",
           width: 150,
           sortable: true
         },
@@ -221,20 +253,29 @@ export default {
       depData: [],
       dataType: 0,
       roleModalVisible: false,
-      editDepartments: []
+      editDepartments: [],
+      tenementList: []
     };
   },
   methods: {
     init() {
       this.getList();
+
+      getAllTenementList().then(res => {
+        if (res.success) {
+          this.tenementList = res.result;
+        }
+      });
     },
-
-
+    handleSelectDepTree(v) {
+      this.roleForm.departmentId = v;
+    },
     handleSearch() {
       this.searchForm.pageNumber = 1;
       this.searchForm.pageSize = 10;
       this.getList();
-    },selectDateRange(v) {
+    },
+    selectDateRange(v) {
       if (v) {
         this.searchForm.startDate = v[0];
         this.searchForm.endDate = v[1];
@@ -301,7 +342,7 @@ export default {
       }
       this.getList();
     },
-     getList() {
+    getList() {
       // 多条件搜索用户列表
       this.loading = true;
       getCourtListData(this.searchForm).then(res => {
@@ -312,7 +353,7 @@ export default {
         }
       });
     },
-   cancel() {
+    cancel() {
       this.roleModalVisible = false;
     },
     submitSave() {
@@ -347,7 +388,10 @@ export default {
       this.modalType = 0;
       this.modalTitle = "添加";
       this.$refs.roleForm.resetFields();
+      this.$refs.depTree.setData("", "");
+
       delete this.roleForm.id;
+
       this.roleModalVisible = true;
     },
     edit(v) {
@@ -363,6 +407,11 @@ export default {
       let str = JSON.stringify(v);
       let roleInfo = JSON.parse(str);
       this.roleForm = roleInfo;
+      this.$refs.depTree.setData(
+        roleInfo.departmentId,
+        roleInfo.departmentTitle
+      );
+
       this.roleModalVisible = true;
     },
     remove(v) {
@@ -371,7 +420,7 @@ export default {
         content: "您确认要删除 " + v.title + " ?",
         loading: true,
         onOk: () => {
-          deleteCourt({ids: v.id}).then(res => {
+          deleteCourt({ ids: v.id }).then(res => {
             this.$Modal.remove();
             if (res.success) {
               this.$Message.success("删除成功");
@@ -381,8 +430,7 @@ export default {
         }
       });
     },
-  
-   
+
     clearSelectAll() {
       this.$refs.table.selectAll(false);
     },
@@ -405,7 +453,7 @@ export default {
             ids += e.id + ",";
           });
           ids = ids.substring(0, ids.length - 1);
-          deleteCourt({ids: ids}).then(res => {
+          deleteCourt({ ids: ids }).then(res => {
             this.$Modal.remove();
             if (res.success) {
               this.$Message.success("删除成功");
@@ -416,7 +464,7 @@ export default {
         }
       });
     },
-  
+
     // 全选反选
     selectTreeAll() {
       this.selectAllFlag = !this.selectAllFlag;
@@ -433,7 +481,6 @@ export default {
         }
       });
     }
-  
   },
   mounted() {
     this.init();

@@ -437,3 +437,7 @@ export const getRecordDetailList = (params) => {
 export const updateRecordDetailList = (params) => {
     return postRequest('/recordDetail/edit', params)
 }
+// 物业列表
+export const getAllTenementList = (params) => {
+    return getRequest('/tenement/getAllList', params)
+}
