@@ -4,6 +4,8 @@ const dict = {
         sex: [],
         userType: [],
         questionType: [],
+        education: [],
+        expertType: []
     },
     mutations: {
         // 设置值的改变方法
@@ -17,6 +19,14 @@ const dict = {
 
         setQuestionType(state, list) {
             state.questionType = list;
+        },
+
+        setEducation(state, list) {
+            state.education = list;
+        },
+
+        setExpertType(state, list) {
+            state.expertType = list;
         },
     }
 };

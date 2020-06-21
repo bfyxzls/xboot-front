@@ -24,6 +24,17 @@ dictUtil.initDictData = function (vm) {
             vm.$store.commit("setQuestionType", res.result);
         }
     });
+
+    axios.get(getDictData + "education").then(res => {
+        if(res.success){
+            vm.$store.commit("setEducation", res.result);
+        }
+    });
+    axios.get(getDictData + "expertType").then(res => {
+        if(res.success){
+            vm.$store.commit("setExpertType", res.result);
+        }
+    });
 };
 
 export default dictUtil;

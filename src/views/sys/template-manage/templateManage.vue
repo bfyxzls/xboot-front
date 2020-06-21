@@ -80,7 +80,12 @@
             <FormItem label="排序" prop="sortOrder">
               <Input v-model="form.sortOrder" />
             </FormItem>
-
+            <FormItem label="记分类型" prop="scoreType">
+              <Select v-model="form.scoreType">
+                <Option value="0">不记分</Option>
+                <Option value="1">记分</Option>
+              </Select>
+            </FormItem>
             <FormItem label="类型" prop="questionType">
               <Select v-model="form.questionType">
                 <Option
@@ -89,7 +94,6 @@
                   :value="item.value"
                 >{{item.title}}</Option>
               </Select>
-
             </FormItem>
             <Form-item>
               <Button
@@ -152,6 +156,13 @@
           <Input v-model="formAdd.sortOrder" />
         </FormItem>
 
+        <FormItem label="记分类型" prop="scoreType">
+          <Select v-model="formAdd.scoreType">
+            <Option value="0">不记分</Option>
+            <Option value="1">记分</Option>
+          </Select>
+        </FormItem>
+
         <FormItem label="类型" prop="questionType">
           <Select v-model="formAdd.questionType">
             <Option
@@ -211,7 +222,7 @@ export default {
         showAlways: true,
         questionType: 0
       },
-     
+
       editorOption: {
         modules: {
           toolbar: [
@@ -363,7 +374,7 @@ export default {
         let menu = JSON.parse(str);
         this.form = menu;
 
-        this.form.questionType=String(menu.questionType);
+        this.form.questionType = String(menu.questionType);
         this.editTitle = menu.title;
       } else {
         this.cancelEdit();

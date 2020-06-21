@@ -647,6 +647,7 @@ export default {
       let str = JSON.stringify(v);
       let data = JSON.parse(str);
       this.form = data;
+      this.form.type= this.form.type.toString();
       this.showType = "1";
       this.showUser = true;
     },

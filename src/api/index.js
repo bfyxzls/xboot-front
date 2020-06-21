@@ -441,3 +441,26 @@ export const updateRecordDetailList = (params) => {
 export const getAllTenementList = (params) => {
     return getRequest('/tenement/getAllList', params)
 }
+
+
+// 专家列表
+export const getExpertList = (params) => {
+    return getRequest('/expert/getByCondition', params)
+}
+// 添加专家
+export const  addExpert = (params) => {
+    return postRequest('/expert/add', params)
+}
+// 所有专家列表
+export const getExpertAllList = (params) => {
+    return getRequest('/expert/getAllList', params)
+}
+// 修改专家
+export const updateExpert = (params) => {
+    return postRequest('/expert/edit', params)
+}
+
+// 删除专家
+export const delExpert = (params) => {
+    return postRequest('/expert/delByIds', params)
+}

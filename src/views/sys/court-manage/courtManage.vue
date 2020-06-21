@@ -80,7 +80,7 @@
         <FormItem label="所属部门">
           <department-tree-choose @on-change="handleSelectDepTree" ref="depTree"></department-tree-choose>
         </FormItem>
-        <FormItem label="物业" prop="roleIds">
+        <FormItem label="物业" prop="tenementId">
           <Select v-model="roleForm.tenementId">
             <Option
               v-for="item in tenementList"

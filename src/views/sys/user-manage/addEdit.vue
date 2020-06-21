@@ -88,7 +88,7 @@
               </FormItem>
             </Col>
             <Col span="12">
-             <FormItem label="类型">
+             <FormItem label="类型" prop="type">
                 <Select v-model="form.type">
                   <Option
                     v-for="(item, i) in this.$store.state.dict.userType"
