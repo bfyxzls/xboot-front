@@ -1,16 +1,14 @@
 <style lang="less">
 @import "../../../styles/table-common.less";
-@import "./recordManage.less";
+@import "./reportManage.less";
 </style>
 <template>
   <div class="search">
     <Card>
       <Form ref="searchForm" :model="searchForm" inline :label-width="70">
-        <Form-item label="小区" prop="courtId">
-          <Select v-model="searchForm.courtId" placeholder="请选择" clearable style="width: 200px">
-            <Option v-for="(item) in courtAllList" :key="item.id" :value="item.id">{{item.title}}</Option>
-          </Select>
-        </Form-item>
+        <FormItem label="组织机构">
+          <department-tree-choose @on-change="handleSelectDepTree" ref="depTree"></department-tree-choose>
+        </FormItem>
 
         <Form-item label="创建时间">
           <DatePicker
@@ -27,11 +25,6 @@
         </Form-item>
       </Form>
 
-      <Row class="operation">
-        <Button @click="delAll" icon="md-trash">批量删除</Button>
-        <Button @click="init" icon="md-refresh">刷新</Button>
-        <Button type="dashed" @click="openTip=!openTip">{{openTip ? "关闭提示" : "开启提示"}}</Button>
-      </Row>
       <Row v-show="openTip">
         <Alert show-icon>
           已选择
@@ -98,33 +91,25 @@
       >
         题目： {{item.templateTitle}}
         <div v-if="item.questionType === 4">
-          <img :src="item.content" width="50" height="50"/>
+          <img :src="item.content" width="50" height="50" />
         </div>
         <div v-if="item.questionType === 1">{{item.score}}</div>
-        <div  v-if="item.questionType === 2 || item.questionType === 3">{{item.content}}</div>
+        <div v-if="item.questionType === 2 || item.questionType === 3">{{item.content}}</div>
       </div>
     </Modal>
   </div>
 </template>
 
 <script>
-import {
-  addRecord,
-  editRecord,
-  deleteRecord,
-  getRecordListData,
-  getAllTypeList,
-  getTaskListData,
-  getCourtListData,
-  getTenementListData,
-  getCourtAllList,
-  getRecordDetailList,
-  updateRecordDetailList
-} from "@/api/index";
+import { getReportList, getRecordDetailList } from "@/api/index";
 import util from "@/libs/util.js";
+import departmentTreeChoose from "@/views/my-components/xboot/department-tree-choose";
+
 export default {
   name: "task-manage",
-
+  components: {
+    departmentTreeChoose
+  },
   data() {
     return {
       openTip: true,
@@ -178,11 +163,22 @@ export default {
           width: 60,
           align: "center"
         },
-       
+        {
+          title: "行政区",
+          key: "departmentTreeTitle",
+          width: 300,
+          sortable: true
+        },
         {
           title: "小区",
           key: "courtTitle",
-          width: 150,
+          width: 200,
+          sortable: true
+        },
+        {
+          title: "分数",
+          key: "score",
+          width: 100,
           sortable: true
         },
         {
@@ -197,12 +193,7 @@ export default {
           minWidth: 150,
           sortable: true
         },
-         {
-          title: "分数",
-          key: "score",
-          width: 150,
-          sortable: true
-        },
+
         {
           title: "创建时间",
           key: "createTime",
@@ -215,7 +206,8 @@ export default {
           key: "action",
           align: "center",
           fixed: "right",
-          width: 350,
+          width: 100,
+
           render: (h, params) => {
             return h("div", [
               h(
@@ -234,39 +226,6 @@ export default {
                   }
                 },
                 "查看"
-              ),
-              h(
-                "Button",
-                {
-                  props: {
-                    size: "small"
-                  },
-                  style: {
-                    marginRight: "5px"
-                  },
-                  on: {
-                    click: () => {
-                      this.edit(params.row);
-                    }
-                  }
-                },
-                "编辑"
-              ),
-
-              h(
-                "Button",
-                {
-                  props: {
-                    type: "error",
-                    size: "small"
-                  },
-                  on: {
-                    click: () => {
-                      this.remove(params.row);
-                    }
-                  }
-                },
-                "删除"
               )
             ]);
           }
@@ -295,31 +254,9 @@ export default {
   methods: {
     init() {
       this.getList();
-      getAllTypeList().then(res => {
-        if (res.success) {
-          this.typeList = res.result;
-        }
-      });
-      getTaskListData().then(res => {
-        if (res.success) {
-          this.taskList = res.result.content;
-        }
-      });
-      getCourtListData().then(res => {
-        if (res.success) {
-          this.courtList = res.result.content;
-        }
-      });
-      getCourtAllList().then(res => {
-        if (res.success) {
-          this.courtAllList = res.result;
-        }
-      });
-      getTenementListData().then(res => {
-        if (res.success) {
-          this.tenementList = res.result.content;
-        }
-      });
+    },
+    handleSelectDepTree(v) {
+      this.searchForm.departmentId = v;
     },
     selectDateRange(v) {
       if (v) {
@@ -404,7 +341,7 @@ export default {
     getList() {
       // 多条件搜索用户列表
       this.loading = true;
-      getRecordListData(this.searchForm).then(res => {
+      getReportList(this.searchForm).then(res => {
         this.loading = false;
         if (res.success) {
           this.data = res.result.content;
@@ -415,53 +352,7 @@ export default {
     cancel() {
       this.roleModalVisible = false;
     },
-    submitSave() {
-      this.submitLoading = true;
-      let result = "";
-      for (var s in this.recordDetailList) {
-        result =
-          result +
-          this.recordDetailList[s].id +
-          "_" +
-          this.recordDetailList[s].score +
-          "|";
-      }
-      updateRecordDetailList({ recordDetails: result }).then(res => {
-        this.submitLoading = false;
-        if (res.success) {
-          this.$Message.success("操作成功");
-          this.getList();
-          this.roleModalVisible = false;
-        }
-      });
-    },
-    add() {
-      this.modalType = 0;
-      this.modalTitle = "添加";
-      this.$refs.roleForm.resetFields();
-      delete this.roleForm.id;
-      this.roleModalVisible = true;
-    },
-    edit(v) {
-      this.modalType = 1;
-      this.modalTitle = "编辑";
-      //   this.$refs.roleForm.resetFields();
-      // 转换null为""
-      for (let attr in v) {
-        if (v[attr] == null) {
-          v[attr] = "";
-        }
-      }
-      let str = JSON.stringify(v);
-      let roleInfo = JSON.parse(str);
-      getRecordDetailList({ recordId: roleInfo.id }).then(res => {
-        if (res.success) {
-          this.recordDetailList = res.result;
-        }
-      });
-      this.roleForm = roleInfo;
-      this.roleModalVisible = true;
-    },
+
     detail(v) {
       this.modalType = 2;
       this.modalTitle = "查看";
@@ -480,22 +371,6 @@ export default {
       this.roleForm = roleInfo;
       this.roleModalDetailVisible = true;
     },
-    remove(v) {
-      this.$Modal.confirm({
-        title: "确认删除",
-        content: "您确认要删除 " + v.title + " ?",
-        loading: true,
-        onOk: () => {
-          deleteRecord({ ids: v.id }).then(res => {
-            this.$Modal.remove();
-            if (res.success) {
-              this.$Message.success("删除成功");
-              this.getList();
-            }
-          });
-        }
-      });
-    },
 
     clearSelectAll() {
       this.$refs.table.selectAll(false);
@@ -503,32 +378,6 @@ export default {
     changeSelect(e) {
       this.selectList = e;
       this.selectCount = e.length;
-    },
-    delAll() {
-      if (this.selectCount <= 0) {
-        this.$Message.warning("您还未选择要删除的数据");
-        return;
-      }
-      this.$Modal.confirm({
-        title: "确认删除",
-        content: "您确认要删除所选的 " + this.selectCount + " 条数据?",
-        loading: true,
-        onOk: () => {
-          let ids = "";
-          this.selectList.forEach(function(e) {
-            ids += e.id + ",";
-          });
-          ids = ids.substring(0, ids.length - 1);
-          deleteRecord({ ids: ids }).then(res => {
-            this.$Modal.remove();
-            if (res.success) {
-              this.$Message.success("删除成功");
-              this.clearSelectAll();
-              this.getList();
-            }
-          });
-        }
-      });
     },
 
     // 全选反选

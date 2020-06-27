@@ -464,3 +464,8 @@ export const updateExpert = (params) => {
 export const delExpert = (params) => {
     return postRequest('/expert/delByIds', params)
 }
+
+// 报表列表
+export const getReportList = (params) => {
+    return getRequest('/report/getByCondition', params)
+} 

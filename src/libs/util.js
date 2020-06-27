@@ -92,7 +92,7 @@ util.setCurrentPath = function (vm, name) {
         currentPathArr = [
             {
                 title: util.handleTitle(vm, util.getRouterObjByName(vm.$store.state.app.routers, 'home_index')),
-                path: '/home',
+                path: '/user-manage',
                 name: 'home_index'
             },
             {

@@ -33,3 +33,14 @@ export default dict;
 路由英文名 随便起个名字 expert-manage
 前端组件 从view文件夹下面开始的绝对路径 sys/expert-manage/expertManage
 ```
+# 起始页的设置
+```
+libs/util.js文件
+...
+  currentPathArr = [
+            {
+                title: util.handleTitle(vm, util.getRouterObjByName(vm.$store.state.app.routers, 'home_index')),
+                path: '/user-manage', //这个地址改为你的起始页
+                name: 'home_index'
+            }...
+```
