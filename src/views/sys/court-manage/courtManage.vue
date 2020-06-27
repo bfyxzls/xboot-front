@@ -6,6 +6,9 @@
   <div class="search">
     <Card>
       <Form ref="searchForm" :model="searchForm" inline :label-width="70">
+          <FormItem label="组织机构">
+          <department-tree-choose @on-change="handleSelectDepTree" ref="depTree"></department-tree-choose>
+        </FormItem>
         <Form-item label="名称" prop="title">
           <Input
             type="text"
@@ -95,6 +98,18 @@
         </FormItem>
         <FormItem label="备注" prop="description">
           <Input v-model="roleForm.description" />
+        </FormItem>
+        <FormItem label="所属区" prop="region">
+          <Input v-model="roleForm.region" placeholder="所属区" />
+        </FormItem>
+        <FormItem label="地区" prop="address">
+          <Input v-model="roleForm.address" placeholder="地区" />
+         </FormItem>
+          <FormItem label="经度" prop="longitude">
+          <Input v-model="roleForm.longitude" placeholder="经度" />
+        </FormItem>
+          <FormItem label="纬度" prop="latitude">
+          <Input v-model="roleForm.latitude" placeholder="纬度" />
         </FormItem>
       </Form>
       <div slot="footer">
@@ -269,6 +284,8 @@ export default {
     },
     handleSelectDepTree(v) {
       this.roleForm.departmentId = v;
+      this.searchForm.departmentId = v;
+
     },
     handleSearch() {
       this.searchForm.pageNumber = 1;

@@ -98,10 +98,11 @@
       >
         题目： {{item.templateTitle}}
         <div v-if="item.questionType === 4">
-          <img :src="item.content" width="50" height="50"/>
+          <img :src="item.pictureUrl" width="50" height="50" />
         </div>
         <div v-if="item.questionType === 1">{{item.score}}</div>
-        <div  v-if="item.questionType === 2 || item.questionType === 3">{{item.content}}</div>
+        <div v-if="item.questionType === 2">{{item.textValue}}</div>
+        <div v-if="item.questionType === 3">{{item.dateValue}}</div>
       </div>
     </Modal>
   </div>
@@ -119,11 +120,12 @@ import {
   getTenementListData,
   getCourtAllList,
   getRecordDetailList,
-  updateRecordDetailList
+  updateRecordDetailList,
+  auditRecordDetailList
 } from "@/api/index";
 import util from "@/libs/util.js";
 export default {
-  name: "task-manage",
+  name: "record-manage",
 
   data() {
     return {
@@ -178,7 +180,7 @@ export default {
           width: 60,
           align: "center"
         },
-       
+
         {
           title: "小区",
           key: "courtTitle",
@@ -197,7 +199,7 @@ export default {
           minWidth: 150,
           sortable: true
         },
-         {
+        {
           title: "分数",
           key: "score",
           width: 150,
@@ -252,7 +254,23 @@ export default {
                 },
                 "编辑"
               ),
-
+              h(
+                "Button",
+                {
+                  props: {
+                    size: "small"
+                  },
+                  style: {
+                    marginRight: "5px"
+                  },
+                  on: {
+                    click: () => {
+                      this.audit(params.row);
+                    }
+                  }
+                },
+                "审核"
+              ),
               h(
                 "Button",
                 {
@@ -426,14 +444,26 @@ export default {
           this.recordDetailList[s].score +
           "|";
       }
-      updateRecordDetailList({ recordDetails: result }).then(res => {
-        this.submitLoading = false;
-        if (res.success) {
-          this.$Message.success("操作成功");
-          this.getList();
-          this.roleModalVisible = false;
-        }
-      });
+      if (this.modalType == 1) {
+        updateRecordDetailList({ recordDetails: result }).then(res => {
+          this.submitLoading = false;
+          if (res.success) {
+            this.$Message.success("操作成功");
+            this.getList();
+            this.roleModalVisible = false;
+          }
+        });
+      }
+      if (this.modalType == 2) {
+        auditRecordDetailList({ recordDetails: result }).then(res => {
+          this.submitLoading = false;
+          if (res.success) {
+            this.$Message.success("操作成功");
+            this.getList();
+            this.roleModalVisible = false;
+          }
+        });
+      }
     },
     add() {
       this.modalType = 0;
@@ -445,6 +475,26 @@ export default {
     edit(v) {
       this.modalType = 1;
       this.modalTitle = "编辑";
+      //   this.$refs.roleForm.resetFields();
+      // 转换null为""
+      for (let attr in v) {
+        if (v[attr] == null) {
+          v[attr] = "";
+        }
+      }
+      let str = JSON.stringify(v);
+      let roleInfo = JSON.parse(str);
+      getRecordDetailList({ recordId: roleInfo.id }).then(res => {
+        if (res.success) {
+          this.recordDetailList = res.result;
+        }
+      });
+      this.roleForm = roleInfo;
+      this.roleModalVisible = true;
+    },
+    audit(v) {
+      this.modalType = 2;
+      this.modalTitle = "审核";
       //   this.$refs.roleForm.resetFields();
       // 转换null为""
       for (let attr in v) {

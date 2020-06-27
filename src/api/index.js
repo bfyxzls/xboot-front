@@ -437,6 +437,13 @@ export const getRecordDetailList = (params) => {
 export const updateRecordDetailList = (params) => {
     return postRequest('/recordDetail/edit', params)
 }
+
+// 审核评价列表
+export const auditRecordDetailList = (params) => {
+    return postRequest('/recordDetail/audit', params)
+}
+
+
 // 物业列表
 export const getAllTenementList = (params) => {
     return getRequest('/tenement/getAllList', params)

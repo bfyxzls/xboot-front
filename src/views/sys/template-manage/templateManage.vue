@@ -374,7 +374,7 @@ export default {
       }
       this.$refs.form.resetFields();
       this.form.id = "";
-      this.editTitle = "";
+      this.editTitle = ""; 
     },
     handleReset() {
       let type = this.form.type;
