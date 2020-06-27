@@ -60,15 +60,8 @@
               <Input v-model="form.title" />
             </FormItem>
 
-            <FormItem label="内容" prop="content" class="block-tool">
-              <quill-editor
-                v-model="form.content"
-                ref="myQuillEditor"
-                :options="editorOption"
-                @blur="onEditorBlur($event)"
-                @focus="onEditorFocus($event)"
-                @change="onEditorChange($event)"
-              ></quill-editor>
+            <FormItem label="评价说明" prop="content" class="block-tool">
+              <textarea v-model="form.content" rows="5" style="width:300px"/>
             </FormItem>
 
             <FormItem label="分值" prop="score">
@@ -136,14 +129,7 @@
         </FormItem>
 
         <FormItem label="内容" prop="content">
-          <quill-editor
-            v-model="formAdd.content"
-            ref="myQuillEditor"
-            :options="editorOption"
-            @blur="onEditorBlur($event)"
-            @focus="onEditorFocus($event)"
-            @change="onEditorChange($event)"
-          ></quill-editor>
+                        <textarea v-model="formAdd.content" rows="5" style="width:300px" />
         </FormItem>
 
         <FormItem label="分值" prop="score">
@@ -412,8 +398,12 @@ export default {
               // 标记重新获取菜单数据
               this.$store.commit("setAdded", false);
               util.initRouter(this);
+              //主要为了不刷新左侧菜单
+               selectTree(this.form); 
               this.init();
               this.menuModalVisible = false;
+             
+
             }
           });
         }
