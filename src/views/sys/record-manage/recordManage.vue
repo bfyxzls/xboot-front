@@ -67,7 +67,7 @@
       </Row>
     </Card>
 
-    <!-- 添加和编辑 -->
+    <!-- 编辑 -->
     <Modal :title="modalTitle" v-model="roleModalVisible" :mask-closable="false" :width="500">
       <Form :label-width="80">
         <div
@@ -76,8 +76,23 @@
           style="border-bottom:1px dashed #aaa;padding:5px;"
         >
           <b>{{i+1}}.</b>
+
           {{item.templateTitle}}
-          <Input v-model="item.score" :value="item.score" style="width:50px" name="score" />
+          <div v-if="item.questionType === 1">
+            <Input v-model="item.score" :value="item.score" style="width:50px" name="score" />
+          </div>
+          <div v-if="item.questionType === 2">
+            <Input v-model="item.content" :value="item.content" style="width:50px" name="content" />
+          </div>
+          <div v-if="item.questionType === 3">
+            <Input
+              v-model="item.textValue"
+              :value="item.textValue"
+              style="width:50px"
+              name="textValue"
+            />
+          </div>
+
           <div style="display:none">
             <Input v-model="item.id" :value="item.id" name="id" />
           </div>
@@ -121,7 +136,8 @@ import {
   getCourtAllList,
   getRecordDetailList,
   updateRecordDetailList,
-  auditRecordDetailList
+  auditRecordDetailList,
+  editRecordDetailList
 } from "@/api/index";
 import util from "@/libs/util.js";
 export default {

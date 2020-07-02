@@ -437,7 +437,10 @@ export const getRecordDetailList = (params) => {
 export const updateRecordDetailList = (params) => {
     return postRequest('/recordDetail/edit', params)
 }
-
+// 更新评价列表v2
+export const editRecordDetailList = (params) => {
+    return postRequest('/recordDetail/editOne', params)
+}
 // 审核评价列表
 export const auditRecordDetailList = (params) => {
     return postRequest('/recordDetail/audit', params)
