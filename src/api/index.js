@@ -1,5 +1,5 @@
 // 统一请求路径前缀在libs/axios.js中修改
-import { getRequest, postRequest, putRequest, getNoAuthRequest, postNoAuthRequest } from '@/libs/axios';
+import { getRequest, postRequest, postBodyRequest,putRequest, getNoAuthRequest, postNoAuthRequest } from '@/libs/axios';
 
 
 
@@ -439,7 +439,7 @@ export const updateRecordDetailList = (params) => {
 }
 // 更新评价列表v2
 export const editRecordDetailList = (params) => {
-    return postRequest('/recordDetail/editOne', params)
+    return postBodyRequest('/recordDetail/editOne', params)
 }
 // 审核评价列表
 export const auditRecordDetailList = (params) => {

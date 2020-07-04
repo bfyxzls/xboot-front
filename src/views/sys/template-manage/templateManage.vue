@@ -70,6 +70,13 @@
               </Tooltip>
             </FormItem>
 
+            <FormItem label="是否必填" prop="isRequired">
+              <Select v-model="form.isRequired">
+                <Option value="1">是</Option>
+                <Option value="0">否</Option>
+              </Select>
+            </FormItem>
+
             <FormItem label="排序" prop="sortOrder">
               <Input v-model="form.sortOrder" />
             </FormItem>
@@ -137,7 +144,12 @@
             <Input v-model="formAdd.score" />
           </Tooltip>
         </FormItem>
-
+          <FormItem label="是否必填" prop="isRequired">
+          <Select v-model="formAdd.isRequired">
+            <Option value="1">是</Option>
+            <Option value="0">否</Option>
+          </Select>
+        </FormItem>
         <FormItem label="排序" prop="sortOrder">
           <Input v-model="formAdd.sortOrder" />
         </FormItem>

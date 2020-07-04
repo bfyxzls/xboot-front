@@ -76,7 +76,6 @@
           style="border-bottom:1px dashed #aaa;padding:5px;"
         >
           <b>{{i+1}}.</b>
-
           {{item.templateTitle}}
           <div v-if="item.questionType === 1">
             <Input v-model="item.score" :value="item.score" style="width:50px" name="score" />
@@ -115,9 +114,9 @@
         <div v-if="item.questionType === 4">
           <img :src="item.pictureUrl" width="50" height="50" />
         </div>
-        <div v-if="item.questionType === 1">{{item.score}}</div>
-        <div v-if="item.questionType === 2">{{item.textValue}}</div>
-        <div v-if="item.questionType === 3">{{item.dateValue}}</div>
+        <div v-if="item.questionType === 1">分数：{{item.score}}</div>
+        <div v-if="item.questionType === 2">文本选项：{{item.textValue}}</div>
+        <div v-if="item.questionType === 3">日期选项：{{item.dateValue}}</div>
       </div>
     </Modal>
   </div>
@@ -315,6 +314,7 @@ export default {
       selectAllFlag: false,
       depData: [],
       dataType: 0,
+      taskId: "",
       roleModalVisible: false,
       roleModalDetailVisible: false,
       editDepartments: [],
@@ -450,18 +450,33 @@ export default {
       this.roleModalVisible = false;
     },
     submitSave() {
+      console.log(this);
       this.submitLoading = true;
-      let result = "";
+      //let result = "";
+      let result = [];
       for (var s in this.recordDetailList) {
-        result =
-          result +
-          this.recordDetailList[s].id +
-          "_" +
-          this.recordDetailList[s].score +
-          "|";
+        // result =
+        //   result +
+        //   this.recordDetailList[s].id +
+        //   "_" +
+        //   this.recordDetailList[s].score +
+        //   "|";
+        result.push({
+          templateId: this.recordDetailList[s].templateId,
+          score: this.recordDetailList[s].score,
+          content: this.recordDetailList[s].content,
+          textValue: this.recordDetailList[s].textValue,
+          dateValue: this.recordDetailList[s].dateValue,
+          recordDetailId: this.recordDetailList[s].id,
+
+        });
       }
+      let recordFormDTO = {
+        taskId: this.taskId,
+        jsonRecordDetails: result
+      };
       if (this.modalType == 1) {
-        updateRecordDetailList({ recordDetails: result }).then(res => {
+        editRecordDetailList(recordFormDTO).then(res => {
           this.submitLoading = false;
           if (res.success) {
             this.$Message.success("操作成功");
@@ -505,6 +520,7 @@ export default {
           this.recordDetailList = res.result;
         }
       });
+      this.taskId = roleInfo.taskId;
       this.roleForm = roleInfo;
       this.roleModalVisible = true;
     },
