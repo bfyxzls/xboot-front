@@ -374,6 +374,8 @@ export default {
 
         this.form.questionType = String(menu.questionType);
         this.form.scoreType = String(menu.scoreType);
+        this.form.isRequired = String(menu.isRequired);
+
         this.editTitle = menu.title;
       } else {
         this.cancelEdit();
