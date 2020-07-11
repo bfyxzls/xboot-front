@@ -96,24 +96,12 @@
           </Select>
         </FormItem>
         <FormItem label="个人简介" prop="introduction">
-          <quill-editor
-            v-model="roleForm.introduction"
-            ref="myQuillEditor"
-            :options="editorOption"
-            @blur="onEditorBlur($event)"
-            @focus="onEditorFocus($event)"
-            @change="onEditorChange($event)"
-          ></quill-editor>
+        <textarea v-model="roleForm.introduction" rows="5" style="width:300px"/>
+
         </FormItem>
         <FormItem label="个人经历" prop="experience">
-          <quill-editor
-            v-model="roleForm.experience"
-            ref="myQuillEditor"
-            :options="editorOption"
-            @blur="onEditorBlur($event)"
-            @focus="onEditorFocus($event)"
-            @change="onEditorChange($event)"
-          ></quill-editor>
+        <textarea v-model="roleForm.experience" rows="5" style="width:300px"/>
+
         </FormItem>
         <FormItem label="头像">
           <upload-pic-thumb v-model="roleForm.picture" :multiple="false"></upload-pic-thumb>

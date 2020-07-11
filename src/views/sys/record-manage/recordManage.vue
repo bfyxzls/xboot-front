@@ -6,6 +6,10 @@
   <div class="search">
     <Card>
       <Form ref="searchForm" :model="searchForm" inline :label-width="70">
+         <FormItem label="组织机构">
+          <department-tree-choose @on-change="handleSelectDepTree" ref="depTree"></department-tree-choose>
+        </FormItem>
+
         <Form-item label="小区" prop="courtId">
           <Select v-model="searchForm.courtId" placeholder="请选择" clearable style="width: 200px">
             <Option v-for="(item) in courtAllList" :key="item.id" :value="item.id">{{item.title}}</Option>
@@ -67,42 +71,7 @@
       </Row>
     </Card>
 
-    <!-- 编辑 -->
-    <Modal :title="modalTitle" v-model="roleModalVisible" :mask-closable="false" :width="500">
-      <Form :label-width="80">
-        <div
-          v-for="(item, i) in recordDetailList"
-          :key="i"
-          style="border-bottom:1px dashed #aaa;padding:5px;"
-        >
-          <b>{{i+1}}.</b>
-          {{item.templateTitle}}
-          <div v-if="item.questionType === 1">
-            <Input v-model="item.score" :value="item.score" style="width:50px" name="score" />
-          </div>
-          <div v-if="item.questionType === 2">
-            <Input v-model="item.content" :value="item.content" style="width:50px" name="content" />
-          </div>
-          <div v-if="item.questionType === 3">
-            <Input
-              v-model="item.textValue"
-              :value="item.textValue"
-              style="width:50px"
-              name="textValue"
-            />
-          </div>
-
-          <div style="display:none">
-            <Input v-model="item.id" :value="item.id" name="id" />
-          </div>
-        </div>
-      </Form>
-
-      <div slot="footer">
-        <Button type="text" @click="cancel">取消</Button>
-        <Button type="primary" :loading="submitLoading" @click="submitSave">提交</Button>
-      </div>
-    </Modal>
+   
 
     <Modal :title="modalTitle" v-model="roleModalDetailVisible" :mask-closable="false" :width="500">
       <div
@@ -139,9 +108,13 @@ import {
   editRecordDetailList
 } from "@/api/index";
 import util from "@/libs/util.js";
+import departmentTreeChoose from "@/views/my-components/xboot/department-tree-choose";
+
 export default {
   name: "record-manage",
-
+ components: {
+    departmentTreeChoose
+  },
   data() {
     return {
       openTip: true,
@@ -196,6 +169,12 @@ export default {
           align: "center"
         },
 
+       {
+          title: "行政区",
+          key: "departmentTreeTitle",
+          width: 150,
+          sortable: true
+        },
         {
           title: "小区",
           key: "courtTitle",
@@ -326,6 +305,9 @@ export default {
       recordDetailList: []
     };
   },
+  handleSelectDepTree(v) {
+    this.searchForm.departmentId = v;
+  },
   methods: {
     init() {
       this.getList();
@@ -455,12 +437,6 @@ export default {
       //let result = "";
       let result = [];
       for (var s in this.recordDetailList) {
-        // result =
-        //   result +
-        //   this.recordDetailList[s].id +
-        //   "_" +
-        //   this.recordDetailList[s].score +
-        //   "|";
         result.push({
           templateId: this.recordDetailList[s].templateId,
           score: this.recordDetailList[s].score,
@@ -486,7 +462,7 @@ export default {
         });
       }
       if (this.modalType == 2) {
-        auditRecordDetailList({ recordDetails: result }).then(res => {
+        auditRecordDetailList(recordFormDTO ).then(res => {
           this.submitLoading = false;
           if (res.success) {
             this.$Message.success("操作成功");
@@ -525,6 +501,7 @@ export default {
       this.roleModalVisible = true;
     },
     audit(v) {
+      
       this.modalType = 2;
       this.modalTitle = "审核";
       //   this.$refs.roleForm.resetFields();
@@ -536,6 +513,7 @@ export default {
       }
       let str = JSON.stringify(v);
       let roleInfo = JSON.parse(str);
+       this.taskId = roleInfo.taskId;
       getRecordDetailList({ recordId: roleInfo.id }).then(res => {
         if (res.success) {
           this.recordDetailList = res.result;

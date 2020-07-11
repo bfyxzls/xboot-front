@@ -443,7 +443,7 @@ export const editRecordDetailList = (params) => {
 }
 // 审核评价列表
 export const auditRecordDetailList = (params) => {
-    return postRequest('/recordDetail/audit', params)
+    return postBodyRequest('/recordDetail/auditOne', params)
 }
 
 
