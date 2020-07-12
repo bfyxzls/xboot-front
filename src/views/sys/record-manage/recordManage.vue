@@ -71,7 +71,43 @@
       </Row>
     </Card>
 
-   
+    <!-- 编辑 -->
+
+    <Modal :title="modalTitle" v-model="roleModalVisible" :mask-closable="false" :width="500">
+      <Form :label-width="80">
+        <div
+          v-for="(item, i) in recordDetailList"
+          :key="i"
+          style="border-bottom:1px dashed #aaa;padding:5px;"
+        >
+          <b>{{i+1}}.</b>
+          {{item.templateTitle}}
+          <div v-if="item.questionType === 1">
+            <Input v-model="item.score" :value="item.score" style="width:50px" name="score" />
+          </div>
+          <div v-if="item.questionType === 2">
+            <Input v-model="item.content" :value="item.content" style="width:50px" name="content" />
+          </div>
+          <div v-if="item.questionType === 3">
+            <Input
+              v-model="item.textValue"
+              :value="item.textValue"
+              style="width:50px"
+              name="textValue"
+            />
+          </div>
+
+          <div style="display:none">
+            <Input v-model="item.id" :value="item.id" name="id" />
+          </div>
+        </div>
+      </Form>
+
+      <div slot="footer">
+        <Button type="text" @click="cancel">取消</Button>
+        <Button type="primary" :loading="submitLoading" @click="submitSave">提交</Button>
+      </div>
+    </Modal>
 
     <Modal :title="modalTitle" v-model="roleModalDetailVisible" :mask-closable="false" :width="500">
       <div
@@ -305,9 +341,7 @@ export default {
       recordDetailList: []
     };
   },
-  handleSelectDepTree(v) {
-    this.searchForm.departmentId = v;
-  },
+
   methods: {
     init() {
       this.getList();
@@ -316,6 +350,7 @@ export default {
           this.typeList = res.result;
         }
       });
+       
       getTaskListData().then(res => {
         if (res.success) {
           this.taskList = res.result.content;
@@ -337,6 +372,9 @@ export default {
         }
       });
     },
+     handleSelectDepTree(v) {
+    this.searchForm.departmentId = v;
+  },
     selectDateRange(v) {
       if (v) {
         this.searchForm.startDate = v[0];

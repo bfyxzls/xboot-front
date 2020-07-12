@@ -60,28 +60,7 @@
       </Row>
     </Card>
 
-    <!-- 添加和编辑 -->
-    <Modal :title="modalTitle" v-model="roleModalVisible" :mask-closable="false" :width="500">
-      <Form :label-width="80">
-        <div
-          v-for="(item, i) in recordDetailList"
-          :key="i"
-          style="border-bottom:1px dashed #aaa;padding:5px;"
-        >
-          <b>{{i+1}}.</b>
-          {{item.templateTitle}}
-          <Input v-model="item.score" :value="item.score" style="width:50px" name="score" />
-          <div style="display:none">
-            <Input v-model="item.id" :value="item.id" name="id" />
-          </div>
-        </div>
-      </Form>
 
-      <div slot="footer">
-        <Button type="text" @click="cancel">取消</Button>
-        <Button type="primary" :loading="submitLoading" @click="submitSave">提交</Button>
-      </div>
-    </Modal>
 
     <Modal :title="modalTitle" v-model="roleModalDetailVisible" :mask-closable="false" :width="500">
       <div
