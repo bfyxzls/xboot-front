@@ -458,7 +458,6 @@ export default {
     getList() {
       // 多条件搜索用户列表
       this.loading = true;
-      this.searchForm.isSelf=false;
       getRecordListData(this.searchForm).then(res => {
         this.loading = false;
         if (res.success) {

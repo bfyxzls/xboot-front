@@ -397,7 +397,7 @@ export const getDetail  = (params) => {
 }
 // 获取评价记录
 export const getRecordListData = (params) => {
-    return getRequest('/record/getByCondition', params)
+    return getRequest('/record/getByConditionMgr', params)
 }
 // 添加评价记录
 export const addRecord = (params) => {
