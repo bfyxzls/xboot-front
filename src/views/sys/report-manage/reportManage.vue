@@ -22,6 +22,7 @@
         </Form-item>
         <Form-item style="margin-left:-35px;" class="br">
           <Button @click="handleSearch" type="primary" icon="ios-search">搜索</Button>
+          <Button @click="exportExcel" type="primary" icon="ios-search">导出</Button>
         </Form-item>
       </Form>
 
@@ -60,8 +61,6 @@
       </Row>
     </Card>
 
-
-
     <Modal :title="modalTitle" v-model="roleModalDetailVisible" :mask-closable="false" :width="500">
       <div
         v-for="(item, i) in recordDetailList"
@@ -80,7 +79,11 @@
 </template>
 
 <script>
-import { getReportList, getRecordDetailList } from "@/api/index";
+import {
+  getReportList,
+  getRecordDetailList,
+  getReportExport
+} from "@/api/index";
 import util from "@/libs/util.js";
 import departmentTreeChoose from "@/views/my-components/xboot/department-tree-choose";
 
@@ -316,7 +319,9 @@ export default {
       this.searchForm.pageSize = 10;
       this.getList();
     },
-
+    exportExcel() {
+      getReportExport(this.searchForm).then(res=>{});
+    },
     getList() {
       // 多条件搜索用户列表
       this.loading = true;

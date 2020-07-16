@@ -1,5 +1,13 @@
 // 统一请求路径前缀在libs/axios.js中修改
-import { getRequest, postRequest, postBodyRequest,putRequest, getNoAuthRequest, postNoAuthRequest } from '@/libs/axios';
+import { 
+    getRequest, 
+    postRequest, 
+    postBodyRequest,
+    putRequest, 
+    getNoAuthRequest, 
+    postNoAuthRequest ,
+    downloadFile
+} from '@/libs/axios';
 
 
 
@@ -479,3 +487,14 @@ export const delExpert = (params) => {
 export const getReportList = (params) => {
     return getRequest('/report/getByCondition', params)
 } 
+
+// 评价导出
+export const getRecordExport= (params) => {
+    return downloadFile('/record/export', params)
+}
+
+
+// 报表评价导出
+export const getReportExport= (params) => {
+    return downloadFile('/report/export', params)
+}

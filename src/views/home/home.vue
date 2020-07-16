@@ -8,7 +8,7 @@
 </template>
 
 <script>
-location.href="/sys/user-manage"
+//location.href="/sys/user-manage"
 import { ipInfo } from "@/api/index";
 import visitVolume from "./components/visitVolume.vue";
 import visitSeparation from "./components/visitSeparation.vue";

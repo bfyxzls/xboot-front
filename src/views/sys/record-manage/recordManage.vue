@@ -6,7 +6,7 @@
   <div class="search">
     <Card>
       <Form ref="searchForm" :model="searchForm" inline :label-width="70">
-         <FormItem label="组织机构">
+        <FormItem label="组织机构">
           <department-tree-choose @on-change="handleSelectDepTree" ref="depTree"></department-tree-choose>
         </FormItem>
 
@@ -28,6 +28,7 @@
         </Form-item>
         <Form-item style="margin-left:-35px;" class="br">
           <Button @click="handleSearch" type="primary" icon="ios-search">搜索</Button>
+          <Button @click="exportExcel" type="primary" icon="ios-search">导出</Button>
         </Form-item>
       </Form>
 
@@ -141,14 +142,15 @@ import {
   getRecordDetailList,
   updateRecordDetailList,
   auditRecordDetailList,
-  editRecordDetailList
+  editRecordDetailList,
+  getRecordExport
 } from "@/api/index";
 import util from "@/libs/util.js";
 import departmentTreeChoose from "@/views/my-components/xboot/department-tree-choose";
 
 export default {
   name: "record-manage",
- components: {
+  components: {
     departmentTreeChoose
   },
   data() {
@@ -205,7 +207,7 @@ export default {
           align: "center"
         },
 
-       {
+        {
           title: "行政区",
           key: "departmentTreeTitle",
           width: 150,
@@ -350,7 +352,7 @@ export default {
           this.typeList = res.result;
         }
       });
-       
+
       getTaskListData().then(res => {
         if (res.success) {
           this.taskList = res.result.content;
@@ -372,9 +374,9 @@ export default {
         }
       });
     },
-     handleSelectDepTree(v) {
-    this.searchForm.departmentId = v;
-  },
+    handleSelectDepTree(v) {
+      this.searchForm.departmentId = v;
+    },
     selectDateRange(v) {
       if (v) {
         this.searchForm.startDate = v[0];
@@ -455,6 +457,10 @@ export default {
       this.getList();
     },
 
+    exportExcel() {
+      getRecordExport(this.searchForm).then(res=>{});
+    },
+
     getList() {
       // 多条件搜索用户列表
       this.loading = true;
@@ -481,8 +487,7 @@ export default {
           content: this.recordDetailList[s].content,
           textValue: this.recordDetailList[s].textValue,
           dateValue: this.recordDetailList[s].dateValue,
-          recordDetailId: this.recordDetailList[s].id,
-
+          recordDetailId: this.recordDetailList[s].id
         });
       }
       let recordFormDTO = {
@@ -500,7 +505,7 @@ export default {
         });
       }
       if (this.modalType == 2) {
-        auditRecordDetailList(recordFormDTO ).then(res => {
+        auditRecordDetailList(recordFormDTO).then(res => {
           this.submitLoading = false;
           if (res.success) {
             this.$Message.success("操作成功");
@@ -539,7 +544,6 @@ export default {
       this.roleModalVisible = true;
     },
     audit(v) {
-      
       this.modalType = 2;
       this.modalTitle = "审核";
       //   this.$refs.roleForm.resetFields();
@@ -551,7 +555,7 @@ export default {
       }
       let str = JSON.stringify(v);
       let roleInfo = JSON.parse(str);
-       this.taskId = roleInfo.taskId;
+      this.taskId = roleInfo.taskId;
       getRecordDetailList({ recordId: roleInfo.id }).then(res => {
         if (res.success) {
           this.recordDetailList = res.result;
