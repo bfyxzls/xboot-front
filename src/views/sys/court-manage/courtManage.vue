@@ -6,9 +6,15 @@
   <div class="search">
     <Card>
       <Form ref="searchForm" :model="searchForm" inline :label-width="70">
-          <FormItem label="组织机构">
+        <FormItem label="组织机构">
           <department-tree-choose @on-change="handleSelectDepTree" ref="depTree"></department-tree-choose>
         </FormItem>
+          <Form-item label="项目类型" prop="projectType">
+          <Select v-model="searchForm.projectType" placeholder="请选择" clearable style="width: 200px">
+            <Option value="商品房">商品房</Option>
+            <Option value="保障房">保障房</Option>
+          </Select>
+        </Form-item>
         <Form-item label="名称" prop="title">
           <Input
             type="text"
@@ -74,12 +80,18 @@
       </Row>
     </Card>
 
-    <!-- 编辑 -->
+    <!-- 添加和编辑 -->
     <Modal :title="modalTitle" v-model="roleModalVisible" :mask-closable="false" :width="500">
       <Form ref="roleForm" :model="roleForm" :label-width="80" :rules="roleFormValidate">
         <FormItem label="名称" prop="title">
           <Input v-model="roleForm.title" placeholder="请输入名称" />
         </FormItem>
+        <Form-item label="项目类型" prop="projectType">
+          <Select v-model="roleForm.projectType" placeholder="请选择" clearable style="width: 200px">
+            <Option value="商品房">商品房</Option>
+            <Option value="保障房">保障房</Option>
+          </Select>
+        </Form-item>
         <FormItem label="所属部门">
           <department-tree-choose @on-change="handleSelectDepTree" ref="depTree"></department-tree-choose>
         </FormItem>
@@ -104,11 +116,11 @@
         </FormItem>
         <FormItem label="地区" prop="address">
           <Input v-model="roleForm.address" placeholder="地区" />
-         </FormItem>
-          <FormItem label="经度" prop="longitude">
+        </FormItem>
+        <FormItem label="经度" prop="longitude">
           <Input v-model="roleForm.longitude" placeholder="经度" />
         </FormItem>
-          <FormItem label="纬度" prop="latitude">
+        <FormItem label="纬度" prop="latitude">
           <Input v-model="roleForm.latitude" placeholder="纬度" />
         </FormItem>
       </Form>
@@ -152,7 +164,12 @@ export default {
       modalTitle: "",
       roleForm: {
         name: "",
-        description: ""
+        description: "",
+        address:"",
+        region:"",
+        longitude:0,
+        latitude:0
+
       },
       roleFormValidate: {
         name: [{ required: true, message: "名称不能为空", trigger: "blur" }]
@@ -183,13 +200,19 @@ export default {
           width: 150,
           sortable: true
         },
-          {
+         {
+          title: "项目类型",
+          key: "projectType",
+          width: 150,
+          sortable: true
+        },
+        {
           title: "机构",
           key: "departmentTitle",
           width: 150,
           sortable: true
         },
-          {
+        {
           title: "物业",
           key: "tenementTitle",
           width: 150,
@@ -285,12 +308,23 @@ export default {
     handleSelectDepTree(v) {
       this.roleForm.departmentId = v;
       this.searchForm.departmentId = v;
-
     },
     handleSearch() {
       this.searchForm.pageNumber = 1;
       this.searchForm.pageSize = 10;
       this.getList();
+    },
+   handleReset() {
+      this.$refs.searchForm.resetFields();
+      this.searchForm.pageNumber = 1;
+      this.searchForm.pageSize = 10;
+      this.selectDate = null;
+      this.searchForm.startDate = "";
+      this.searchForm.endDate = "";
+      this.selectDep = [];
+      this.searchForm.departmentId = "";
+      // 重新加载数据
+      this.getUserList();
     },
     selectDateRange(v) {
       if (v) {
@@ -343,12 +377,12 @@ export default {
       );
     },
     changePage(v) {
-      this.pageNumber = v;
+      this.searchForm.pageNumber = v;
       this.getList();
       this.clearSelectAll();
     },
     changePageSize(v) {
-      this.pageSize = v;
+      this.searchForm.pageSize = v;
       this.getList();
     },
     changeSort(e) {

@@ -428,12 +428,12 @@ export default {
       );
     },
     changePage(v) {
-      this.pageNumber = v;
+      this.searchForm.pageNumber = v;
       this.getList();
       this.clearSelectAll();
     },
     changePageSize(v) {
-      this.pageSize = v;
+      this.searchForm.pageSize = v;
       this.getList();
     },
     changeSort(e) {
