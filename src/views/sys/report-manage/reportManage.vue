@@ -9,7 +9,13 @@
         <FormItem label="组织机构">
           <department-tree-choose @on-change="handleSelectDepTree" ref="depTree"></department-tree-choose>
         </FormItem>
-
+  <Form-item label="分类" prop="typeId">
+          <Select v-model="searchForm.typeId" clearable style="width: 200px">
+            <Option value="1" selected>业主评价表</Option>
+            <Option value="2">专家评价表</Option>
+            <Option value="3">管理评价表</Option>
+          </Select>
+        </Form-item>
         <Form-item label="创建时间">
           <DatePicker
             type="daterange"
@@ -167,6 +173,18 @@ export default {
           title: "分类",
           key: "typeTitle",
           minWidth: 150,
+          sortable: true
+        },
+          {
+          title: "经度",
+          key: "longitude",
+          width: 100,
+          sortable: true
+        },
+          {
+          title: "纬度",
+          key: "latitude",
+          width: 100,
           sortable: true
         },
         {

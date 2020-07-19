@@ -10,6 +10,14 @@
           <department-tree-choose @on-change="handleSelectDepTree" ref="depTree"></department-tree-choose>
         </FormItem>
 
+        <Form-item label="分类" prop="typeId">
+          <Select v-model="searchForm.typeId" placeholder="请选择" clearable style="width: 200px">
+            <Option value="1" selected>业主评价表</Option>
+            <Option value="2">专家评价表</Option>
+            <Option value="3">管理评价表</Option>
+          </Select>
+        </Form-item>
+
         <Form-item label="小区" prop="courtId">
           <Select v-model="searchForm.courtId" placeholder="请选择" clearable style="width: 200px">
             <Option v-for="(item) in courtAllList" :key="item.id" :value="item.id">{{item.title}}</Option>
@@ -34,6 +42,8 @@
 
       <Row class="operation">
         <Button @click="delAll" icon="md-trash">批量删除</Button>
+        <Button @click="auditRecord" icon="md-trash">批量审核</Button>
+
         <Button @click="init" icon="md-refresh">刷新</Button>
         <Button type="dashed" @click="openTip=!openTip">{{openTip ? "关闭提示" : "开启提示"}}</Button>
       </Row>
@@ -87,14 +97,19 @@
             <Input v-model="item.score" :value="item.score" style="width:50px" name="score" />
           </div>
           <div v-if="item.questionType === 2">
-            <Input v-model="item.content" :value="item.content" style="width:50px" name="content" />
-          </div>
-          <div v-if="item.questionType === 3">
             <Input
               v-model="item.textValue"
               :value="item.textValue"
               style="width:50px"
               name="textValue"
+            />
+          </div>
+          <div v-if="item.questionType === 3">
+            <Input
+              v-model="item.dateValue"
+              :value="item.dateValue"
+              style="width:50px"
+              name="dateValue"
             />
           </div>
 
@@ -143,7 +158,8 @@ import {
   updateRecordDetailList,
   auditRecordDetailList,
   editRecordDetailList,
-  getRecordExport
+  getRecordExport,
+  auditRecord
 } from "@/api/index";
 import util from "@/libs/util.js";
 import departmentTreeChoose from "@/views/my-components/xboot/department-tree-choose";
@@ -458,7 +474,7 @@ export default {
     },
 
     exportExcel() {
-      getRecordExport(this.searchForm).then(res=>{});
+      getRecordExport(this.searchForm).then(res => {});
     },
 
     getList() {
@@ -625,6 +641,32 @@ export default {
             this.$Modal.remove();
             if (res.success) {
               this.$Message.success("删除成功");
+              this.clearSelectAll();
+              this.getList();
+            }
+          });
+        }
+      });
+    },
+    auditRecord() {
+      if (this.selectCount <= 0) {
+        this.$Message.warning("您还未选择要审核的数据");
+        return;
+      }
+      this.$Modal.confirm({
+        title: "确认审核",
+        content: "您确认要审核所选的 " + this.selectCount + " 条数据?",
+        loading: true,
+        onOk: () => {
+          let ids = "";
+          this.selectList.forEach(function(e) {
+            ids += e.id + ",";
+          });
+          ids = ids.substring(0, ids.length - 1);
+          auditRecord({ ids: ids }).then(res => {
+            this.$Modal.remove();
+            if (res.success) {
+              this.$Message.success("审核成功");
               this.clearSelectAll();
               this.getList();
             }

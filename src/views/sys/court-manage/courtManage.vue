@@ -9,7 +9,7 @@
         <FormItem label="组织机构">
           <department-tree-choose @on-change="handleSelectDepTree" ref="depTree"></department-tree-choose>
         </FormItem>
-          <Form-item label="项目类型" prop="projectType">
+        <Form-item label="项目类型" prop="projectType">
           <Select v-model="searchForm.projectType" placeholder="请选择" clearable style="width: 200px">
             <Option value="商品房">商品房</Option>
             <Option value="保障房">保障房</Option>
@@ -111,11 +111,11 @@
         <FormItem label="备注" prop="description">
           <Input v-model="roleForm.description" />
         </FormItem>
-        <FormItem label="所属区" prop="region">
-          <Input v-model="roleForm.region" placeholder="所属区" />
+        <FormItem label="地区" prop="region">
+          <Input v-model="roleForm.region" placeholder="地区" />
         </FormItem>
-        <FormItem label="地区" prop="address">
-          <Input v-model="roleForm.address" placeholder="地区" />
+        <FormItem label="地址" prop="address">
+          <Input v-model="roleForm.address" placeholder="地址" />
         </FormItem>
         <FormItem label="经度" prop="longitude">
           <Input v-model="roleForm.longitude" placeholder="经度" />
@@ -165,11 +165,10 @@ export default {
       roleForm: {
         name: "",
         description: "",
-        address:"",
-        region:"",
-        longitude:0,
-        latitude:0
-
+        address: "",
+        region: "",
+        longitude: 0,
+        latitude: 0
       },
       roleFormValidate: {
         name: [{ required: true, message: "名称不能为空", trigger: "blur" }]
@@ -200,7 +199,7 @@ export default {
           width: 150,
           sortable: true
         },
-         {
+        {
           title: "项目类型",
           key: "projectType",
           width: 150,
@@ -314,7 +313,7 @@ export default {
       this.searchForm.pageSize = 10;
       this.getList();
     },
-   handleReset() {
+    handleReset() {
       this.$refs.searchForm.resetFields();
       this.searchForm.pageNumber = 1;
       this.searchForm.pageSize = 10;
@@ -427,6 +426,7 @@ export default {
               this.submitLoading = false;
               if (res.success) {
                 this.$Message.success("操作成功");
+                this.searchForm.departmentId = "";
                 this.getList();
                 this.roleModalVisible = false;
               }
@@ -440,9 +440,8 @@ export default {
       this.modalTitle = "添加";
       this.$refs.roleForm.resetFields();
       this.$refs.depTree.setData("", "");
-
       delete this.roleForm.id;
-
+      this.searchForm.departmentId = "";
       this.roleModalVisible = true;
     },
     edit(v) {
@@ -462,7 +461,7 @@ export default {
         roleInfo.departmentId,
         roleInfo.departmentTitle
       );
-
+      this.searchForm.departmentId = "";
       this.roleModalVisible = true;
     },
     remove(v) {

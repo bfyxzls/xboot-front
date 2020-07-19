@@ -44,7 +44,7 @@ export const ipInfo = (params) => {
 }
 // 个人中心编辑
 export const userInfoEdit = (params) => {
-    return postRequest('/user/edit', params)
+    return postBodyRequest('/user/edit', params)
 }
 // 个人中心修改密码
 export const changePass = (params) => {
@@ -497,4 +497,9 @@ export const getRecordExport= (params) => {
 // 报表评价导出
 export const getReportExport= (params) => {
     return downloadFile('/report/export', params)
+}
+
+// 批量审核
+export const auditRecord = (params) => {
+    return postRequest('/record/auditRecord', params)
 }
