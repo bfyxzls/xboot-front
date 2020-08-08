@@ -102,8 +102,21 @@
           <b>{{i+1}}.</b>
           {{item.templateTitle}}
           <div v-if="item.questionType === 1">
-            <Input v-model="item.score" :value="item.score" style="width:50px" name="score" />
+            <RadioGroup v-model="item.score" @on-change="changeModel">
+              <Radio v-for="sub in item.valueTemplateList" :label="sub.score" :key="sub.score">
+                <span>{{sub.title}}</span>
+              </Radio>
+            </RadioGroup>
           </div>
+
+          <div v-if="item.questionType === 5 || item.questionType === 6">
+           <CheckboxGroup  v-model="item.score" @on-change="changeModel">
+              <Checkbox  v-for="sub in item.valueTemplateList" :label="sub.score" :key="sub.score">
+                <span>{{sub.title}}</span>
+              </Checkbox >
+            </CheckboxGroup >
+          </div>
+
           <div v-if="item.questionType === 2">
             <Input
               v-model="item.textValue"
@@ -119,6 +132,16 @@
               style="width:50px"
               name="dateValue"
             />
+
+             <DatePicker
+            type="daterange"
+            format="yyyy-MM-dd"
+            clearable
+            @on-change="selectDateRange"
+            placeholder="选择起始时间"
+            style="width: 200px"
+          ></DatePicker>
+          
           </div>
 
           <div style="display:none">
@@ -413,7 +436,7 @@ export default {
         this.searchForm.endDate = v[1];
       }
     },
-
+  
     renderContent(h, { root, node, data }) {
       let icon = "";
       if (data.level == 0) {
