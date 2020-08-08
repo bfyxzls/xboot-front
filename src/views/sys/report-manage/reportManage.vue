@@ -9,13 +9,22 @@
         <FormItem label="组织机构">
           <department-tree-choose @on-change="handleSelectDepTree" ref="depTree"></department-tree-choose>
         </FormItem>
-  <Form-item label="分类" prop="typeId">
+         <Form-item label="分类" prop="typeId">
           <Select v-model="searchForm.typeId" clearable style="width: 200px">
             <Option value="1" selected>业主评价表</Option>
             <Option value="2">专家评价表</Option>
             <Option value="3">管理评价表</Option>
           </Select>
         </Form-item>
+         <Form-item label="ID" prop="id">
+            <Input
+              type="text"
+              v-model="searchForm.id"
+              clearable
+              placeholder="请输入ID"
+              style="width: 200px"
+            />
+          </Form-item>
         <Form-item label="创建时间">
           <DatePicker
             type="daterange"
@@ -150,6 +159,12 @@ export default {
           type: "index",
           width: 60,
           align: "center"
+        },
+        {
+          title: "ID",
+          key: "id",
+          width: 200,
+          sortable: true
         },
         {
           title: "行政区",

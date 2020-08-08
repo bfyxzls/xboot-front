@@ -17,7 +17,15 @@
             <Option value="3">管理评价表</Option>
           </Select>
         </Form-item>
-
+        <Form-item label="ID" prop="id">
+          <Input
+            type="text"
+            v-model="searchForm.id"
+            clearable
+            placeholder="请输入ID"
+            style="width: 200px"
+          />
+        </Form-item>
         <Form-item label="小区" prop="courtId">
           <Select v-model="searchForm.courtId" placeholder="请选择" clearable style="width: 200px">
             <Option v-for="(item) in courtAllList" :key="item.id" :value="item.id">{{item.title}}</Option>
@@ -223,6 +231,12 @@ export default {
           align: "center"
         },
 
+        {
+          title: "ID",
+          key: "id",
+          width: 200,
+          sortable: true
+        },
         {
           title: "行政区",
           key: "departmentTreeTitle",
