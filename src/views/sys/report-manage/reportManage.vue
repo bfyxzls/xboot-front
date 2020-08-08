@@ -167,6 +167,18 @@ export default {
           sortable: true
         },
         {
+          title: "账号",
+          key: "createByName",
+          width: 200,
+          sortable: true
+        },
+         {
+          title: "昵称",
+          key: "createByNickName",
+          width: 200,
+          sortable: true
+        },
+        {
           title: "行政区",
           key: "departmentTreeTitle",
           width: 300,
