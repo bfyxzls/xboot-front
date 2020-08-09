@@ -27,7 +27,8 @@ import VueApexCharts from 'vue-apexcharts'
 import '@babel/polyfill'
 import quillEditor from 'vue-quill-editor' 
 import 'quill/dist/quill.snow.css'  // 富文本编辑器外部引用样式  三种样式三选一引入即可
-
+import Viewer from 'v-viewer'
+import 'viewerjs/dist/viewer.css'
 Vue.config.productionTip = false
 Vue.use(VueLazyload, {
     error: require('./assets/img-error.png'),
@@ -44,6 +45,17 @@ Vue.use(hasRole);
 Vue.use(iviewArea);
 Vue.use(VueApexCharts)
 Vue.use(quillEditor)
+
+
+
+Vue.use(Viewer)
+Viewer.setDefaults({
+    Options: { 'inline': true, 'button': true, 'navbar': true, 'title': true, 'toolbar': true, 'tooltip': true, 'movable': true, 'zoomable': true, 'rotatable': true, 'scalable': true, 'transition': true, 'fullscreen': true, 'keyboard': true, 'url': 'data-source' }
+})
+
+
+
+
 Vue.component('apexchart', VueApexCharts)
 // 挂载全局使用的方法
 Vue.prototype.getRequest = getRequest;

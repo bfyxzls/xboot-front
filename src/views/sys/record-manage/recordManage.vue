@@ -110,11 +110,11 @@
           </div>
 
           <div v-if="item.questionType === 5 || item.questionType === 6">
-           <CheckboxGroup  v-model="item.score" @on-change="changeModel">
-              <Checkbox  v-for="sub in item.valueTemplateList" :label="sub.score" :key="sub.score">
+            <CheckboxGroup v-model="item.score" @on-change="changeModel">
+              <Checkbox v-for="sub in item.valueTemplateList" :label="sub.score" :key="sub.score">
                 <span>{{sub.title}}</span>
-              </Checkbox >
-            </CheckboxGroup >
+              </Checkbox>
+            </CheckboxGroup>
           </div>
 
           <div v-if="item.questionType === 2">
@@ -133,17 +133,48 @@
               name="dateValue"
             />
 
-             <DatePicker
-            type="daterange"
-            format="yyyy-MM-dd"
-            clearable
-            @on-change="selectDateRange"
-            placeholder="选择起始时间"
-            style="width: 200px"
-          ></DatePicker>
-          
+            <DatePicker
+              type="daterange"
+              format="yyyy-MM-dd"
+              clearable
+              @on-change="selectDateRange"
+              placeholder="选择起始时间"
+              style="width: 200px"
+            ></DatePicker>
           </div>
+          <div v-if="item.pictureUrl!=null && item.pictureUrl.length>0">
+               <viewer :images="item.pictureUrl.split(',')">
+           
+              <div class="detailed" style="padding:2px;margin:2px" v-for="(v,i) in item.pictureUrl.split(',')">
+                <img :src="v" style="width:100px;" />
+              </div>
+       
+          </viewer>
 
+
+            <div class="upload-content">
+      <Upload
+              ref="uploadImg"
+              :headers="headers"
+              action="http://template.ecois.info/image/upload"
+              :show-upload-list="false"
+              :format="['jpg','jpeg','png']"
+              v-show="!updSrc"
+              :before-upload="handleUpload"
+              >
+        <div class="upload-c">
+          <div class="upload-plus"></div>
+          <div class="upload-txt">点击添加图片</div>
+        </div>
+      </Upload>
+      <div class="upd-img" v-show="updSrc">
+        <img :src="updSrc" alt="" style="width:100px;" >
+      </div>
+      <div v-for="(item, index) in file" class="align-r">
+          <a href="javascript:;"  @click="removeFile(item.keyID)">X</a>
+       </div>
+            </div>
+          </div>
           <div style="display:none">
             <Input v-model="item.id" :value="item.id" name="id" />
           </div>
@@ -162,13 +193,22 @@
         :key="i"
         style="border-bottom:1px dashed #aaa;padding:5px;"
       >
+      <div>
         题目： {{item.templateTitle}}
-        <div v-if="item.questionType === 4">
-          <img :src="item.pictureUrl" width="50" height="50" />
         </div>
         <div v-if="item.questionType === 1">分数：{{item.score}}</div>
         <div v-if="item.questionType === 2">文本选项：{{item.textValue}}</div>
         <div v-if="item.questionType === 3">日期选项：{{item.dateValue}}</div>
+        <div v-if="item.pictureUrl!=null && item.pictureUrl.length>0">
+          <viewer :images="item.pictureUrl.split(',')">
+           
+              <div class="detailed" style="padding:2px;margin:2px" v-for="(v,i) in item.pictureUrl.split(',')">
+                <img :src="v" style="width:100px;" />
+              </div>
+       
+          </viewer>
+        </div>
+        <div v-if="item.content!=null && item.content.length>0">备注:{{item.content}}</div>
       </div>
     </Modal>
   </div>
@@ -190,7 +230,7 @@ import {
   auditRecordDetailList,
   editRecordDetailList,
   getRecordExport,
-  auditRecord
+  auditRecord,
 } from "@/api/index";
 import util from "@/libs/util.js";
 import departmentTreeChoose from "@/views/my-components/xboot/department-tree-choose";
@@ -198,10 +238,12 @@ import departmentTreeChoose from "@/views/my-components/xboot/department-tree-ch
 export default {
   name: "record-manage",
   components: {
-    departmentTreeChoose
+    departmentTreeChoose,
   },
   data() {
     return {
+      updSrc:"",
+      file: [],
       openTip: true,
       openSearch: true,
       openLevel: "0",
@@ -217,10 +259,10 @@ export default {
       modalTitle: "",
       roleForm: {
         name: "",
-        description: ""
+        description: "",
       },
       roleFormValidate: {
-        name: [{ required: true, message: "名称不能为空", trigger: "blur" }]
+        name: [{ required: true, message: "名称不能为空", trigger: "blur" }],
       },
       searchForm: {
         id: "",
@@ -237,7 +279,7 @@ export default {
         sort: "createTime",
         order: "desc",
         startDate: "",
-        endDate: ""
+        endDate: "",
       },
       submitLoading: false,
       selectList: [],
@@ -246,68 +288,68 @@ export default {
         {
           type: "selection",
           width: 60,
-          align: "center"
+          align: "center",
         },
         {
           type: "index",
           width: 60,
-          align: "center"
+          align: "center",
         },
 
         {
           title: "ID",
           key: "id",
           width: 200,
-          sortable: true
+          sortable: true,
         },
-           {
+        {
           title: "账号",
           key: "createByName",
           width: 200,
-          sortable: true
+          sortable: true,
         },
-         {
+        {
           title: "昵称",
           key: "createByNickName",
           width: 200,
-          sortable: true
+          sortable: true,
         },
         {
           title: "行政区",
           key: "departmentTreeTitle",
           width: 150,
-          sortable: true
+          sortable: true,
         },
         {
           title: "小区",
           key: "courtTitle",
           width: 150,
-          sortable: true
+          sortable: true,
         },
         {
           title: "分类",
           key: "typeTitle",
           minWidth: 150,
-          sortable: true
+          sortable: true,
         },
         {
           title: "任务",
           key: "taskTitle",
           minWidth: 150,
-          sortable: true
+          sortable: true,
         },
         {
           title: "分数",
           key: "score",
           width: 150,
-          sortable: true
+          sortable: true,
         },
         {
           title: "创建时间",
           key: "createTime",
           width: 170,
           sortable: true,
-          sortType: "desc"
+          sortType: "desc",
         },
         {
           title: "操作",
@@ -321,16 +363,16 @@ export default {
                 "Button",
                 {
                   props: {
-                    size: "small"
+                    size: "small",
                   },
                   style: {
-                    marginRight: "5px"
+                    marginRight: "5px",
                   },
                   on: {
                     click: () => {
                       this.detail(params.row);
-                    }
-                  }
+                    },
+                  },
                 },
                 "查看"
               ),
@@ -338,16 +380,16 @@ export default {
                 "Button",
                 {
                   props: {
-                    size: "small"
+                    size: "small",
                   },
                   style: {
-                    marginRight: "5px"
+                    marginRight: "5px",
                   },
                   on: {
                     click: () => {
                       this.edit(params.row);
-                    }
-                  }
+                    },
+                  },
                 },
                 "编辑"
               ),
@@ -355,16 +397,16 @@ export default {
                 "Button",
                 {
                   props: {
-                    size: "small"
+                    size: "small",
                   },
                   style: {
-                    marginRight: "5px"
+                    marginRight: "5px",
                   },
                   on: {
                     click: () => {
                       this.audit(params.row);
-                    }
-                  }
+                    },
+                  },
                 },
                 "审核"
               ),
@@ -373,19 +415,19 @@ export default {
                 {
                   props: {
                     type: "error",
-                    size: "small"
+                    size: "small",
                   },
                   on: {
                     click: () => {
                       this.remove(params.row);
-                    }
-                  }
+                    },
+                  },
                 },
                 "删除"
-              )
+              ),
             ]);
-          }
-        }
+          },
+        },
       ],
       data: [],
       pageNumber: 1,
@@ -405,40 +447,76 @@ export default {
       taskList: [],
       typeList: [],
       courtAllList: [],
-      recordDetailList: []
+      recordDetailList: [],
     };
   },
 
   methods: {
     init() {
       this.getList();
-      getAllTypeList().then(res => {
+      getAllTypeList().then((res) => {
         if (res.success) {
           this.typeList = res.result;
         }
       });
 
-      getTaskListData().then(res => {
+      getTaskListData().then((res) => {
         if (res.success) {
           this.taskList = res.result.content;
         }
       });
-      getCourtListData().then(res => {
+      getCourtListData().then((res) => {
         if (res.success) {
           this.courtList = res.result.content;
         }
       });
-      getCourtAllList().then(res => {
+      getCourtAllList().then((res) => {
         if (res.success) {
           this.courtAllList = res.result;
         }
       });
-      getTenementListData().then(res => {
+      getTenementListData().then((res) => {
         if (res.success) {
           this.tenementList = res.result.content;
         }
       });
     },
+
+    handleUpload(file) {
+      // 上传文件前的事件钩子
+      // 选择文件后 这里判断文件类型 保存文件 自定义一个keyid 值 方便后面删除操作
+      let keyID = Math.random().toString().substr(2);
+      file["keyID"] = keyID;
+      // 保存文件到总展示文件数据里
+      this.file.push(file);
+      //利用Blob预览本地上传的图片
+      this.handlePreview();
+      // 返回 false 停止自动上传 我们需要手动上传
+      return false;
+    },
+    removeFile(keyID) {
+      // 删除总展示文件里的当前文件
+      this.file = this.file.filter((item) => {
+        return item.keyID != keyID;
+      });
+      this.updSrc = "";
+    },
+    handlePreview() {
+      const self = this;
+      const reader = new FileReader();
+      reader.readAsArrayBuffer(this.file[0]);
+      reader.onload = function (e) {
+        const bf = this.result;
+        const blob = new Blob([bf], { type: "text/plain" });
+        const str = URL.createObjectURL(blob);
+        self.updSrc = str;
+      };
+    },
+    upload() {
+      // 上传文件
+      this.$refs.uploadImg.post(this.file[0]);
+    },
+
     handleSelectDepTree(v) {
       this.searchForm.departmentId = v;
     },
@@ -448,7 +526,7 @@ export default {
         this.searchForm.endDate = v[1];
       }
     },
-  
+
     renderContent(h, { root, node, data }) {
       let icon = "";
       if (data.level == 0) {
@@ -467,28 +545,28 @@ export default {
         {
           style: {
             display: "inline-block",
-            cursor: "pointer"
+            cursor: "pointer",
           },
           on: {
             click: () => {
               data.checked = !data.checked;
-            }
-          }
+            },
+          },
         },
         [
           h("span", [
             h("Icon", {
               props: {
                 type: icon,
-                size: "16"
+                size: "16",
               },
               style: {
                 "margin-right": "8px",
-                "margin-bottom": "3px"
-              }
+                "margin-bottom": "3px",
+              },
             }),
-            h("span", data.title)
-          ])
+            h("span", data.title),
+          ]),
         ]
       );
     },
@@ -523,13 +601,13 @@ export default {
     },
 
     exportExcel() {
-      getRecordExport(this.searchForm).then(res => {});
+      getRecordExport(this.searchForm).then((res) => {});
     },
 
     getList() {
       // 多条件搜索用户列表
       this.loading = true;
-      getRecordListData(this.searchForm).then(res => {
+      getRecordListData(this.searchForm).then((res) => {
         this.loading = false;
         if (res.success) {
           this.data = res.result.content;
@@ -552,15 +630,15 @@ export default {
           content: this.recordDetailList[s].content,
           textValue: this.recordDetailList[s].textValue,
           dateValue: this.recordDetailList[s].dateValue,
-          recordDetailId: this.recordDetailList[s].id
+          recordDetailId: this.recordDetailList[s].id,
         });
       }
       let recordFormDTO = {
         taskId: this.taskId,
-        jsonRecordDetails: result
+        jsonRecordDetails: result,
       };
       if (this.modalType == 1) {
-        editRecordDetailList(recordFormDTO).then(res => {
+        editRecordDetailList(recordFormDTO).then((res) => {
           this.submitLoading = false;
           if (res.success) {
             this.$Message.success("操作成功");
@@ -570,7 +648,7 @@ export default {
         });
       }
       if (this.modalType == 2) {
-        auditRecordDetailList(recordFormDTO).then(res => {
+        auditRecordDetailList(recordFormDTO).then((res) => {
           this.submitLoading = false;
           if (res.success) {
             this.$Message.success("操作成功");
@@ -599,7 +677,7 @@ export default {
       }
       let str = JSON.stringify(v);
       let roleInfo = JSON.parse(str);
-      getRecordDetailList({ recordId: roleInfo.id }).then(res => {
+      getRecordDetailList({ recordId: roleInfo.id }).then((res) => {
         if (res.success) {
           this.recordDetailList = res.result;
         }
@@ -621,7 +699,7 @@ export default {
       let str = JSON.stringify(v);
       let roleInfo = JSON.parse(str);
       this.taskId = roleInfo.taskId;
-      getRecordDetailList({ recordId: roleInfo.id }).then(res => {
+      getRecordDetailList({ recordId: roleInfo.id }).then((res) => {
         if (res.success) {
           this.recordDetailList = res.result;
         }
@@ -639,7 +717,7 @@ export default {
       }
       let str = JSON.stringify(v);
       let roleInfo = JSON.parse(str);
-      getRecordDetailList({ recordId: roleInfo.id }).then(res => {
+      getRecordDetailList({ recordId: roleInfo.id }).then((res) => {
         if (res.success) {
           this.recordDetailList = res.result;
         }
@@ -653,14 +731,14 @@ export default {
         content: "您确认要删除 " + v.title + " ?",
         loading: true,
         onOk: () => {
-          deleteRecord({ ids: v.id }).then(res => {
+          deleteRecord({ ids: v.id }).then((res) => {
             this.$Modal.remove();
             if (res.success) {
               this.$Message.success("删除成功");
               this.getList();
             }
           });
-        }
+        },
       });
     },
 
@@ -682,11 +760,11 @@ export default {
         loading: true,
         onOk: () => {
           let ids = "";
-          this.selectList.forEach(function(e) {
+          this.selectList.forEach(function (e) {
             ids += e.id + ",";
           });
           ids = ids.substring(0, ids.length - 1);
-          deleteRecord({ ids: ids }).then(res => {
+          deleteRecord({ ids: ids }).then((res) => {
             this.$Modal.remove();
             if (res.success) {
               this.$Message.success("删除成功");
@@ -694,7 +772,7 @@ export default {
               this.getList();
             }
           });
-        }
+        },
       });
     },
     auditRecord() {
@@ -708,11 +786,11 @@ export default {
         loading: true,
         onOk: () => {
           let ids = "";
-          this.selectList.forEach(function(e) {
+          this.selectList.forEach(function (e) {
             ids += e.id + ",";
           });
           ids = ids.substring(0, ids.length - 1);
-          auditRecord({ ids: ids }).then(res => {
+          auditRecord({ ids: ids }).then((res) => {
             this.$Modal.remove();
             if (res.success) {
               this.$Message.success("审核成功");
@@ -720,7 +798,7 @@ export default {
               this.getList();
             }
           });
-        }
+        },
       });
     },
 
@@ -733,16 +811,16 @@ export default {
     // 递归全选节点
     selectedTreeAll(permData, select) {
       let that = this;
-      permData.forEach(function(e) {
+      permData.forEach(function (e) {
         e.checked = select;
         if (e.children && e.children.length > 0) {
           that.selectedTreeAll(e.children, select);
         }
       });
-    }
+    },
   },
   mounted() {
     this.init();
-  }
+  },
 };
 </script>
