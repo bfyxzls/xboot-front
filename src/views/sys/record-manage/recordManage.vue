@@ -143,36 +143,37 @@
             ></DatePicker>
           </div>
           <div v-if="item.pictureUrl!=null && item.pictureUrl.length>0">
-               <viewer :images="item.pictureUrl.split(',')">
-           
-              <div class="detailed" style="padding:2px;margin:2px" v-for="(v,i) in item.pictureUrl.split(',')">
+            <viewer :images="item.pictureUrl.split(',')">
+              <div
+                class="detailed"
+                style="padding:2px;margin:2px"
+                v-for="(v,i) in item.pictureUrl.split(',')"
+              >
                 <img :src="v" style="width:100px;" />
               </div>
-       
-          </viewer>
-
+            </viewer>
 
             <div class="upload-content">
-      <Upload
-              ref="uploadImg"
-              :headers="headers"
-              action="http://template.ecois.info/image/upload"
-              :show-upload-list="false"
-              :format="['jpg','jpeg','png']"
-              v-show="!updSrc"
-              :before-upload="handleUpload"
-              >
-        <div class="upload-c">
-          <div class="upload-plus"></div>
-          <div class="upload-txt">点击添加图片</div>
-        </div>
-      </Upload>
-      <div class="upd-img" v-show="updSrc">
-        <img :src="updSrc" alt="" style="width:100px;" >
-      </div>
-      <div v-for="(item, index) in file" class="align-r">
-          <a href="javascript:;"  @click="removeFile(item.keyID)">X</a>
-       </div>
+              <Upload
+                ref="uploadImg"
+                :headers="headers"
+                action="http://template.ecois.info/image/upload"
+                :show-upload-list="false"
+                :format="['jpg','jpeg','png']"
+                 v-show="true"
+                :before-upload="handleUpload"
+              > 
+                <div class="upload-c">
+                  <div class="upload-plus"></div>
+                  <div class="upload-txt">点击添加图片</div>
+                </div>
+              </Upload>
+              <div class="upd-img" v-show="updSrc">
+                <img :src="updSrc" alt style="width:100px;" />
+              </div>
+              <div v-for="(item, index) in file" class="align-r">
+                <a href="javascript:;" @click="removeFile(item.keyID)">X</a>
+              </div>
             </div>
           </div>
           <div style="display:none">
@@ -193,19 +194,19 @@
         :key="i"
         style="border-bottom:1px dashed #aaa;padding:5px;"
       >
-      <div>
-        题目： {{item.templateTitle}}
-        </div>
+        <div>题目： {{item.templateTitle}}</div>
         <div v-if="item.questionType === 1">分数：{{item.score}}</div>
         <div v-if="item.questionType === 2">文本选项：{{item.textValue}}</div>
         <div v-if="item.questionType === 3">日期选项：{{item.dateValue}}</div>
         <div v-if="item.pictureUrl!=null && item.pictureUrl.length>0">
           <viewer :images="item.pictureUrl.split(',')">
-           
-              <div class="detailed" style="padding:2px;margin:2px" v-for="(v,i) in item.pictureUrl.split(',')">
-                <img :src="v" style="width:100px;" />
-              </div>
-       
+            <div
+              class="detailed"
+              style="padding:2px;margin:2px"
+              v-for="(v,i) in item.pictureUrl.split(',')"
+            >
+              <img :src="v" style="width:100px;" />
+            </div>
           </viewer>
         </div>
         <div v-if="item.content!=null && item.content.length>0">备注:{{item.content}}</div>
@@ -242,7 +243,7 @@ export default {
   },
   data() {
     return {
-      updSrc:"",
+      updSrc: "",
       file: [],
       openTip: true,
       openSearch: true,
