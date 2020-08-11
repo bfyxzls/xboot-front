@@ -143,38 +143,7 @@
             ></DatePicker>
           </div>
           <div v-if="item.pictureUrl!=null && item.pictureUrl.length>0">
-            <viewer :images="item.pictureUrl.split(',')">
-              <div
-                class="detailed"
-                style="padding:2px;margin:2px"
-                v-for="(v,i) in item.pictureUrl.split(',')"
-              >
-                <img :src="v" style="width:100px;" />
-              </div>
-            </viewer>
-
-            <div class="upload-content">
-              <Upload
-                ref="uploadImg"
-                :headers="headers"
-                action="http://template.ecois.info/image/upload"
-                :show-upload-list="false"
-                :format="['jpg','jpeg','png']"
-                 v-show="true"
-                :before-upload="handleUpload"
-              > 
-                <div class="upload-c">
-                  <div class="upload-plus"></div>
-                  <div class="upload-txt">点击添加图片</div>
-                </div>
-              </Upload>
-              <div class="upd-img" v-show="updSrc">
-                <img :src="updSrc" alt style="width:100px;" />
-              </div>
-              <div v-for="(item, index) in file" class="align-r">
-                <a href="javascript:;" @click="removeFile(item.keyID)">X</a>
-              </div>
-            </div>
+            <upload-pic-thumb v-model="searchSrc(item.id)" />
           </div>
           <div style="display:none">
             <Input v-model="item.id" :value="item.id" name="id" />
@@ -203,7 +172,8 @@
             <div
               class="detailed"
               style="padding:2px;margin:2px"
-              v-for="(v,i) in item.pictureUrl.split(',')"
+              v-for="v in item.pictureUrl.split(',')"
+              v-bind:key="v"
             >
               <img :src="v" style="width:100px;" />
             </div>
@@ -235,15 +205,19 @@ import {
 } from "@/api/index";
 import util from "@/libs/util.js";
 import departmentTreeChoose from "@/views/my-components/xboot/department-tree-choose";
+import uploadPicThumb from "@/views/my-components/xboot/upload-pic-thumb.vue";
+import { set } from "date-fns";
 
 export default {
   name: "record-manage",
   components: {
     departmentTreeChoose,
+    uploadPicThumb,
   },
   data() {
     return {
       updSrc: "",
+      currentfile: [],
       file: [],
       openTip: true,
       openSearch: true,
@@ -483,41 +457,6 @@ export default {
       });
     },
 
-    handleUpload(file) {
-      // 上传文件前的事件钩子
-      // 选择文件后 这里判断文件类型 保存文件 自定义一个keyid 值 方便后面删除操作
-      let keyID = Math.random().toString().substr(2);
-      file["keyID"] = keyID;
-      // 保存文件到总展示文件数据里
-      this.file.push(file);
-      //利用Blob预览本地上传的图片
-      this.handlePreview();
-      // 返回 false 停止自动上传 我们需要手动上传
-      return false;
-    },
-    removeFile(keyID) {
-      // 删除总展示文件里的当前文件
-      this.file = this.file.filter((item) => {
-        return item.keyID != keyID;
-      });
-      this.updSrc = "";
-    },
-    handlePreview() {
-      const self = this;
-      const reader = new FileReader();
-      reader.readAsArrayBuffer(this.file[0]);
-      reader.onload = function (e) {
-        const bf = this.result;
-        const blob = new Blob([bf], { type: "text/plain" });
-        const str = URL.createObjectURL(blob);
-        self.updSrc = str;
-      };
-    },
-    upload() {
-      // 上传文件
-      this.$refs.uploadImg.post(this.file[0]);
-    },
-
     handleSelectDepTree(v) {
       this.searchForm.departmentId = v;
     },
@@ -620,11 +559,13 @@ export default {
       this.roleModalVisible = false;
     },
     submitSave() {
-      console.log(this);
       this.submitLoading = true;
       //let result = "";
       let result = [];
       for (var s in this.recordDetailList) {
+        if (recordDetailList[s].pictureUrl != null) {
+          console.log(recordDetailList[s].pictureUrl);
+        }
         result.push({
           templateId: this.recordDetailList[s].templateId,
           score: this.recordDetailList[s].score,
@@ -681,11 +622,31 @@ export default {
       getRecordDetailList({ recordId: roleInfo.id }).then((res) => {
         if (res.success) {
           this.recordDetailList = res.result;
+          for (var img in this.recordDetailList) {
+            if (this.recordDetailList[img].pictureUrl != null) {
+              this.currentfile.push({
+                id: this.recordDetailList[img].id,
+                value: this.recordDetailList[img].pictureUrl,
+              });
+            }
+          }
         }
       });
+      for (var i in this.currentfile)
+        console.log(this.currentfile[i].id + ":" + this.currentfile[i].value);
       this.taskId = roleInfo.taskId;
       this.roleForm = roleInfo;
       this.roleModalVisible = true;
+    },
+    searchSrc(id) {
+      for (var i in this.currentfile) {
+        if (this.currentfile[i].id === id) {
+          var img = this.currentfile[i].value;
+          if (img != null) return [];
+          else return img.split(",");
+        }
+      }
+      return [];
     },
     audit(v) {
       this.modalType = 2;
