@@ -102,7 +102,7 @@
           <b>{{i+1}}.</b>
           {{item.templateTitle}}
           <div v-if="item.questionType === 1">
-            <RadioGroup v-model="item.score" @on-change="changeModel">
+            <RadioGroup v-model="item.score">
               <Radio v-for="sub in item.valueTemplateList" :label="sub.score" :key="sub.score">
                 <span>{{sub.title}}</span>
               </Radio>
@@ -110,7 +110,7 @@
           </div>
 
           <div v-if="item.questionType === 5 || item.questionType === 6">
-            <CheckboxGroup v-model="item.score" @on-change="changeModel">
+            <CheckboxGroup v-model="item.score">
               <Checkbox v-for="sub in item.valueTemplateList" :label="sub.score" :key="sub.score">
                 <span>{{sub.title}}</span>
               </Checkbox>
@@ -143,7 +143,7 @@
             ></DatePicker>
           </div>
           <div v-if="item.pictureUrl!=null && item.pictureUrl.length>0">
-            <upload-pic-thumb v-model="searchSrc(item.id)" />
+            <upload-pic-thumb v-model="currentfile[item.id]" />
           </div>
           <div style="display:none">
             <Input v-model="item.id" :value="item.id" name="id" />
@@ -201,7 +201,7 @@ import {
   auditRecordDetailList,
   editRecordDetailList,
   getRecordExport,
-  auditRecord,
+  auditRecord
 } from "@/api/index";
 import util from "@/libs/util.js";
 import departmentTreeChoose from "@/views/my-components/xboot/department-tree-choose";
@@ -212,12 +212,12 @@ export default {
   name: "record-manage",
   components: {
     departmentTreeChoose,
-    uploadPicThumb,
+    uploadPicThumb
   },
   data() {
     return {
       updSrc: "",
-      currentfile: [],
+      currentfile: {},
       file: [],
       openTip: true,
       openSearch: true,
@@ -234,10 +234,10 @@ export default {
       modalTitle: "",
       roleForm: {
         name: "",
-        description: "",
+        description: ""
       },
       roleFormValidate: {
-        name: [{ required: true, message: "名称不能为空", trigger: "blur" }],
+        name: [{ required: true, message: "名称不能为空", trigger: "blur" }]
       },
       searchForm: {
         id: "",
@@ -254,7 +254,7 @@ export default {
         sort: "createTime",
         order: "desc",
         startDate: "",
-        endDate: "",
+        endDate: ""
       },
       submitLoading: false,
       selectList: [],
@@ -263,68 +263,68 @@ export default {
         {
           type: "selection",
           width: 60,
-          align: "center",
+          align: "center"
         },
         {
           type: "index",
           width: 60,
-          align: "center",
+          align: "center"
         },
 
         {
           title: "ID",
           key: "id",
           width: 200,
-          sortable: true,
+          sortable: true
         },
         {
           title: "账号",
           key: "createByName",
           width: 200,
-          sortable: true,
+          sortable: true
         },
         {
           title: "昵称",
           key: "createByNickName",
           width: 200,
-          sortable: true,
+          sortable: true
         },
         {
           title: "行政区",
           key: "departmentTreeTitle",
           width: 150,
-          sortable: true,
+          sortable: true
         },
         {
           title: "小区",
           key: "courtTitle",
           width: 150,
-          sortable: true,
+          sortable: true
         },
         {
           title: "分类",
           key: "typeTitle",
           minWidth: 150,
-          sortable: true,
+          sortable: true
         },
         {
           title: "任务",
           key: "taskTitle",
           minWidth: 150,
-          sortable: true,
+          sortable: true
         },
         {
           title: "分数",
           key: "score",
           width: 150,
-          sortable: true,
+          sortable: true
         },
         {
           title: "创建时间",
           key: "createTime",
           width: 170,
           sortable: true,
-          sortType: "desc",
+          sortType: "desc"
         },
         {
           title: "操作",
@@ -338,16 +338,16 @@ export default {
                 "Button",
                 {
                   props: {
-                    size: "small",
+                    size: "small"
                   },
                   style: {
-                    marginRight: "5px",
+                    marginRight: "5px"
                   },
                   on: {
                     click: () => {
                       this.detail(params.row);
-                    },
-                  },
+                    }
+                  }
                 },
                 "查看"
               ),
@@ -355,16 +355,16 @@ export default {
                 "Button",
                 {
                   props: {
-                    size: "small",
+                    size: "small"
                   },
                   style: {
-                    marginRight: "5px",
+                    marginRight: "5px"
                   },
                   on: {
                     click: () => {
                       this.edit(params.row);
-                    },
-                  },
+                    }
+                  }
                 },
                 "编辑"
               ),
@@ -372,16 +372,16 @@ export default {
                 "Button",
                 {
                   props: {
-                    size: "small",
+                    size: "small"
                   },
                   style: {
-                    marginRight: "5px",
+                    marginRight: "5px"
                   },
                   on: {
                     click: () => {
                       this.audit(params.row);
-                    },
-                  },
+                    }
+                  }
                 },
                 "审核"
               ),
@@ -390,19 +390,19 @@ export default {
                 {
                   props: {
                     type: "error",
-                    size: "small",
+                    size: "small"
                   },
                   on: {
                     click: () => {
                       this.remove(params.row);
-                    },
-                  },
+                    }
+                  }
                 },
                 "删除"
-              ),
+              )
             ]);
-          },
-        },
+          }
+        }
       ],
       data: [],
       pageNumber: 1,
@@ -422,35 +422,35 @@ export default {
       taskList: [],
       typeList: [],
       courtAllList: [],
-      recordDetailList: [],
+      recordDetailList: []
     };
   },
 
   methods: {
     init() {
       this.getList();
-      getAllTypeList().then((res) => {
+      getAllTypeList().then(res => {
         if (res.success) {
           this.typeList = res.result;
         }
       });
 
-      getTaskListData().then((res) => {
+      getTaskListData().then(res => {
         if (res.success) {
           this.taskList = res.result.content;
         }
       });
-      getCourtListData().then((res) => {
+      getCourtListData().then(res => {
         if (res.success) {
           this.courtList = res.result.content;
         }
       });
-      getCourtAllList().then((res) => {
+      getCourtAllList().then(res => {
         if (res.success) {
           this.courtAllList = res.result;
         }
       });
-      getTenementListData().then((res) => {
+      getTenementListData().then(res => {
         if (res.success) {
           this.tenementList = res.result.content;
         }
@@ -485,28 +485,28 @@ export default {
         {
           style: {
             display: "inline-block",
-            cursor: "pointer",
+            cursor: "pointer"
           },
           on: {
             click: () => {
               data.checked = !data.checked;
-            },
-          },
+            }
+          }
         },
         [
           h("span", [
             h("Icon", {
               props: {
                 type: icon,
-                size: "16",
+                size: "16"
               },
               style: {
                 "margin-right": "8px",
-                "margin-bottom": "3px",
-              },
+                "margin-bottom": "3px"
+              }
             }),
-            h("span", data.title),
-          ]),
+            h("span", data.title)
+          ])
         ]
       );
     },
@@ -541,13 +541,13 @@ export default {
     },
 
     exportExcel() {
-      getRecordExport(this.searchForm).then((res) => {});
+      getRecordExport(this.searchForm).then(res => {});
     },
 
     getList() {
       // 多条件搜索用户列表
       this.loading = true;
-      getRecordListData(this.searchForm).then((res) => {
+      getRecordListData(this.searchForm).then(res => {
         this.loading = false;
         if (res.success) {
           this.data = res.result.content;
@@ -563,9 +563,11 @@ export default {
       //let result = "";
       let result = [];
       for (var s in this.recordDetailList) {
-        if (recordDetailList[s].pictureUrl != null) {
-          console.log(recordDetailList[s].pictureUrl);
+        var picUrl = "";
+        if (this.currentfile[this.recordDetailList[s].id] != undefined) {
+          picUrl = this.currentfile[this.recordDetailList[s].id].toString();
         }
+
         result.push({
           templateId: this.recordDetailList[s].templateId,
           score: this.recordDetailList[s].score,
@@ -573,14 +575,15 @@ export default {
           textValue: this.recordDetailList[s].textValue,
           dateValue: this.recordDetailList[s].dateValue,
           recordDetailId: this.recordDetailList[s].id,
+          pictureUrl: picUrl
         });
       }
       let recordFormDTO = {
         taskId: this.taskId,
-        jsonRecordDetails: result,
+        jsonRecordDetails: result
       };
       if (this.modalType == 1) {
-        editRecordDetailList(recordFormDTO).then((res) => {
+        editRecordDetailList(recordFormDTO).then(res => {
           this.submitLoading = false;
           if (res.success) {
             this.$Message.success("操作成功");
@@ -590,7 +593,7 @@ export default {
         });
       }
       if (this.modalType == 2) {
-        auditRecordDetailList(recordFormDTO).then((res) => {
+        auditRecordDetailList(recordFormDTO).then(res => {
           this.submitLoading = false;
           if (res.success) {
             this.$Message.success("操作成功");
@@ -619,35 +622,23 @@ export default {
       }
       let str = JSON.stringify(v);
       let roleInfo = JSON.parse(str);
-      getRecordDetailList({ recordId: roleInfo.id }).then((res) => {
+      getRecordDetailList({ recordId: roleInfo.id }).then(res => {
         if (res.success) {
           this.recordDetailList = res.result;
           for (var img in this.recordDetailList) {
             if (this.recordDetailList[img].pictureUrl != null) {
-              this.currentfile.push({
-                id: this.recordDetailList[img].id,
-                value: this.recordDetailList[img].pictureUrl,
-              });
+              this.currentfile[
+                this.recordDetailList[img].id
+              ] = this.recordDetailList[img].pictureUrl.split(",");
             }
           }
         }
       });
-      for (var i in this.currentfile)
-        console.log(this.currentfile[i].id + ":" + this.currentfile[i].value);
       this.taskId = roleInfo.taskId;
       this.roleForm = roleInfo;
       this.roleModalVisible = true;
     },
-    searchSrc(id) {
-      for (var i in this.currentfile) {
-        if (this.currentfile[i].id === id) {
-          var img = this.currentfile[i].value;
-          if (img != null) return [];
-          else return img.split(",");
-        }
-      }
-      return [];
-    },
+
     audit(v) {
       this.modalType = 2;
       this.modalTitle = "审核";
@@ -661,7 +652,7 @@ export default {
       let str = JSON.stringify(v);
       let roleInfo = JSON.parse(str);
       this.taskId = roleInfo.taskId;
-      getRecordDetailList({ recordId: roleInfo.id }).then((res) => {
+      getRecordDetailList({ recordId: roleInfo.id }).then(res => {
         if (res.success) {
           this.recordDetailList = res.result;
         }
@@ -679,7 +670,7 @@ export default {
       }
       let str = JSON.stringify(v);
       let roleInfo = JSON.parse(str);
-      getRecordDetailList({ recordId: roleInfo.id }).then((res) => {
+      getRecordDetailList({ recordId: roleInfo.id }).then(res => {
         if (res.success) {
           this.recordDetailList = res.result;
         }
@@ -693,14 +684,14 @@ export default {
         content: "您确认要删除 " + v.title + " ?",
         loading: true,
         onOk: () => {
-          deleteRecord({ ids: v.id }).then((res) => {
+          deleteRecord({ ids: v.id }).then(res => {
             this.$Modal.remove();
             if (res.success) {
               this.$Message.success("删除成功");
               this.getList();
             }
           });
-        },
+        }
       });
     },
 
@@ -722,11 +713,11 @@ export default {
         loading: true,
         onOk: () => {
           let ids = "";
-          this.selectList.forEach(function (e) {
+          this.selectList.forEach(function(e) {
             ids += e.id + ",";
           });
           ids = ids.substring(0, ids.length - 1);
-          deleteRecord({ ids: ids }).then((res) => {
+          deleteRecord({ ids: ids }).then(res => {
             this.$Modal.remove();
             if (res.success) {
               this.$Message.success("删除成功");
@@ -734,7 +725,7 @@ export default {
               this.getList();
             }
           });
-        },
+        }
       });
     },
     auditRecord() {
@@ -748,11 +739,11 @@ export default {
         loading: true,
         onOk: () => {
           let ids = "";
-          this.selectList.forEach(function (e) {
+          this.selectList.forEach(function(e) {
             ids += e.id + ",";
           });
           ids = ids.substring(0, ids.length - 1);
-          auditRecord({ ids: ids }).then((res) => {
+          auditRecord({ ids: ids }).then(res => {
             this.$Modal.remove();
             if (res.success) {
               this.$Message.success("审核成功");
@@ -760,7 +751,7 @@ export default {
               this.getList();
             }
           });
-        },
+        }
       });
     },
 
@@ -773,16 +764,16 @@ export default {
     // 递归全选节点
     selectedTreeAll(permData, select) {
       let that = this;
-      permData.forEach(function (e) {
+      permData.forEach(function(e) {
         e.checked = select;
         if (e.children && e.children.length > 0) {
           that.selectedTreeAll(e.children, select);
         }
       });
-    },
+    }
   },
   mounted() {
     this.init();
-  },
+  }
 };
 </script>
