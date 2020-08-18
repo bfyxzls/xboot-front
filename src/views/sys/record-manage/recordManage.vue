@@ -126,22 +126,14 @@
             />
           </div>
           <div v-if="item.questionType === 3">
-            <Input
-              v-model="item.dateValue"
-              :value="item.dateValue"
-              style="width:50px"
-              name="dateValue"
-            />
-
+      
             <DatePicker
-              type="daterange"
-              format="yyyy-MM-dd"
-              clearable
-              @on-change="selectDateRange"
-              placeholder="选择起始时间"
-              style="width: 200px"
-            ></DatePicker>
+                  v-model="item.dateValue"
+                  style="display: block"
+                  type="date"
+                ></DatePicker>
           </div>
+
           <div v-if="item.pictureUrl!=null && item.pictureUrl.length>0">
             <upload-pic-thumb v-model="currentfile[item.id]" />
           </div>
@@ -460,12 +452,6 @@ export default {
     handleSelectDepTree(v) {
       this.searchForm.departmentId = v;
     },
-    selectDateRange(v) {
-      if (v) {
-        this.searchForm.startDate = v[0];
-        this.searchForm.endDate = v[1];
-      }
-    },
 
     renderContent(h, { root, node, data }) {
       let icon = "";
@@ -509,6 +495,9 @@ export default {
           ])
         ]
       );
+    },
+     changeBirth(v, d) {
+      this.form.birth = v;
     },
     changePage(v) {
       this.searchForm.pageNumber = v;
@@ -613,7 +602,7 @@ export default {
     edit(v) {
       this.modalType = 1;
       this.modalTitle = "编辑";
-      //   this.$refs.roleForm.resetFields();
+      this.$refs.searchForm.resetFields();
       // 转换null为""
       for (let attr in v) {
         if (v[attr] == null) {
