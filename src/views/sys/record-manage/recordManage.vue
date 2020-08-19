@@ -99,17 +99,44 @@
           :key="i"
           style="border-bottom:1px dashed #aaa;padding:5px;"
         >
-          <b>{{i+1}}.</b>
-          {{item.templateTitle}}
-          <div v-if="item.scoreType==1 && item.questionType === 1">
-            <RadioGroup v-model="item.score">
-              <Radio v-for="sub in item.valueTemplateList" :label="sub.score" :key="sub.score">
-                <span>{{sub.title}}</span>
-              </Radio>
-            </RadioGroup>
+          <div>{{item.templateTitle}}</div>
+          <div v-if="item.questionType === 1">
+            <div>
+              <RadioGroup v-model="item.score">
+                <Radio v-for="sub in item.valueTemplateList" :label="sub.score" :key="sub.score">
+                  <span>{{sub.title}}</span>
+                </Radio>
+              </RadioGroup>
+            </div>
+            <div v-if="item.content!=null && item.content.length>0">
+              <Input v-model="item.content" :value="item.content" name="content" />
+            </div>
+            <div v-if="item.pictureUrl!=null && item.pictureUrl.length>0">
+              <upload-pic-thumb v-model="currentfile[item.id]" />
+            </div>
           </div>
 
-          <div v-else-if="item.questionType === 5 || item.questionType === 6">
+          <div v-else-if="item.scoreType===0 && item.questionType === 2">
+            <Input v-model="item.textValue" :value="item.textValue" name="textValue" />
+          </div>
+
+          <div v-else-if="item.scoreType===1 && item.questionType === 2">
+            <div>
+              <RadioGroup v-model="item.score">
+                <Radio v-for="sub in item.valueTemplateList" :label="sub.score" :key="sub.score">
+                  <span>{{sub.title}}</span>
+                </Radio>
+              </RadioGroup>
+            </div>
+            <div v-if="item.content!=null && item.content.length>0">
+              <Input v-model="item.content" :value="item.content" name="content" />
+            </div>
+            <div v-if="item.pictureUrl!=null && item.pictureUrl.length>0">
+              <upload-pic-thumb v-model="currentfile[item.id]" />
+            </div>
+          </div>
+
+          <div v-else-if="item.questionType === 6">
             <CheckboxGroup v-model="item.score">
               <Checkbox v-for="sub in item.valueTemplateList" :label="sub.score" :key="sub.score">
                 <span>{{sub.title}}</span>
@@ -117,36 +144,11 @@
             </CheckboxGroup>
           </div>
 
-          <div v-else-if="item.scoreType==1 && item.questionType === 2">
-            <div>
-            <RadioGroup v-model="item.score">
-              <Radio v-for="sub in item.valueTemplateList" :label="sub.score" :key="sub.score">
-                <span>{{sub.title}}</span>
-              </Radio>
-            </RadioGroup>
-             </div>
-             <div>
-            <Input v-model="item.content" :value="item.content" style="width:50px" name="content" />
-            </div>
-            <div v-if="item.pictureUrl!=null && item.pictureUrl.length>0">
-            <upload-pic-thumb v-model="currentfile[item.id]" />
-            </div>
-          </div>
-
-          <div v-else-if="item.scoreType==0 && item.questionType === 2">
-            <Input
-              v-model="item.textValue"
-              :value="item.textValue"
-              style="width:50px"
-              name="textValue"
-            />
-          </div>
           <div v-else-if="item.questionType === 3">
             <DatePicker v-model="item.dateValue" style="display: block" type="date"></DatePicker>
           </div>
 
-          <div v-else-if="item.questionType===4 && item.pictureUrl!=null  && item.pictureUrl.length>0">
-            
+          <div v-else-if="item.pictureUrl!=null  && item.pictureUrl.length>0">
             <upload-pic-thumb v-model="currentfile[item.id]" />
           </div>
 
@@ -169,9 +171,9 @@
         style="border-bottom:1px dashed #aaa;padding:5px;"
       >
         <div>题目： {{item.templateTitle}}</div>
-        <div v-if="item.questionType === 1">分数：{{item.score}}</div>
-        <div v-if="item.questionType === 2">文本选项：{{item.textValue}}</div>
-        <div v-if="item.questionType === 3">日期选项：{{item.dateValue}}</div>
+        <div v-if="item.score!=null">分数：{{item.score}}</div>
+        <div v-if="item.textValue!=null && item.textValue.length>0">文本选项：{{item.textValue}}</div>
+        <div v-if="item.dateValue!=null && item.dateValue.length>0">日期选项：{{item.dateValue}}</div>
         <div v-if="item.pictureUrl!=null && item.pictureUrl.length>0">
           <viewer :images="item.pictureUrl.split(',')">
             <div
