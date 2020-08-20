@@ -101,39 +101,19 @@
         >
           <div>{{item.templateTitle}}</div>
           <div v-if="item.questionType === 1">
-            <div>
               <RadioGroup v-model="item.score">
                 <Radio v-for="sub in item.valueTemplateList" :label="sub.score" :key="sub.score">
                   <span>{{sub.title}}</span>
                 </Radio>
               </RadioGroup>
             </div>
-            <div v-if="item.content!=null && item.content.length>0">
-              <Input v-model="item.content" :value="item.content" name="content" />
-            </div>
-            <div v-if="item.pictureUrl!=null && item.pictureUrl.length>0">
-              <upload-pic-thumb v-model="currentfile[item.id]" />
-            </div>
-          </div>
 
           <div v-else-if="item.scoreType===0 && item.questionType === 2">
             <Input v-model="item.textValue" :value="item.textValue" name="textValue" />
           </div>
 
           <div v-else-if="item.scoreType===1 && item.questionType === 2">
-            <div>
-              <RadioGroup v-model="item.score">
-                <Radio v-for="sub in item.valueTemplateList" :label="sub.score" :key="sub.score">
-                  <span>{{sub.title}}</span>
-                </Radio>
-              </RadioGroup>
-            </div>
-            <div v-if="item.content!=null && item.content.length>0">
-              <Input v-model="item.content" :value="item.content" name="content" />
-            </div>
-            <div v-if="item.pictureUrl!=null && item.pictureUrl.length>0">
-              <upload-pic-thumb v-model="currentfile[item.id]" />
-            </div>
+             <Input v-model="item.score" :value="item.score" name="score" />
           </div>
 
           <div v-else-if="item.questionType === 6">
@@ -148,6 +128,9 @@
             <DatePicker v-model="item.dateValue" style="display: block" type="date"></DatePicker>
           </div>
 
+     <div v-if="item.content!=null && item.content.length>0">
+              <Input v-model="item.content" :value="item.content" name="content" />
+            </div>
           <div v-else-if="item.pictureUrl!=null  && item.pictureUrl.length>0">
             <upload-pic-thumb v-model="currentfile[item.id]" />
           </div>
