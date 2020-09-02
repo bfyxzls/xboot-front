@@ -153,7 +153,12 @@
         :key="i"
         style="border-bottom:1px dashed #aaa;padding:5px;"
       >
-        <div>题目： {{item.templateTitle}}</div>
+        <div>位置：{{item.departmentTreeTitle}}</div>
+         <div>小区：{{item.courtTitle}}</div>
+         <div>编号：{{item.id}}</div>
+         <div>类型：{{item.typeTitle}}</div>
+         
+        <div>题目：{{item.templateTitle}}</div>
         <div v-if="item.score!=null">分数：{{item.score}}</div>
         <div v-if="item.textValue!=null && item.textValue.length>0">文本选项：{{item.textValue}}</div>
         <div v-if="item.dateValue!=null && item.dateValue.length>0">日期选项：{{item.dateValue}}</div>
@@ -264,55 +269,55 @@ export default {
         {
           title: "ID",
           key: "id",
-          width: 200,
+          width: 100,
           sortable: true,
         },
         {
           title: "账号",
           key: "createByName",
-          width: 200,
+          width: 100,
           sortable: true,
         },
         {
           title: "昵称",
           key: "createByNickName",
-          width: 200,
+          width: 100,
           sortable: true,
         },
         {
           title: "行政区",
           key: "departmentTreeTitle",
-          width: 150,
+          width: 100,
           sortable: true,
         },
         {
           title: "小区",
           key: "courtTitle",
-          width: 150,
+          width: 100,
           sortable: true,
         },
         {
           title: "分类",
           key: "typeTitle",
-          minWidth: 150,
+          minWidth: 75,
           sortable: true,
         },
         {
           title: "任务",
           key: "taskTitle",
-          minWidth: 150,
+          minWidth: 100,
           sortable: true,
         },
         {
           title: "分数",
           key: "score",
-          width: 150,
+          width: 100,
           sortable: true,
         },
         {
-          title: "创建时间",
+          title: "时间",
           key: "createTime",
-          width: 170,
+          width: 110,
           sortable: true,
           sortType: "desc",
         },
@@ -321,7 +326,7 @@ export default {
           key: "action",
           align: "center",
           fixed: "right",
-          width: 350,
+          width: 150,
           render: (h, params) => {
             return h("div", [
               h(
