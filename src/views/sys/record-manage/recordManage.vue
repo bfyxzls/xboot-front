@@ -153,8 +153,8 @@
         :key="i"
         style="border-bottom:1px dashed #aaa;padding:5px;"
       >
-        <div>位置：{{item.departmentTreeTitle}}</div>
-         <div>小区：{{item.courtTitle}}</div>
+        <div>位置：{{currentRecord.departmentTreeTitle}}</div>
+         <div>小区：{{currentRecord.courtTitle}}</div>
          <div>编号：{{item.id}}</div>
          <div>类型：{{item.typeTitle}}</div>
          
@@ -213,6 +213,7 @@ export default {
     return {
       updSrc: "",
       currentfile: {},
+      currentRecord: {},
       file: [],
       openTip: true,
       openSearch: true,
@@ -417,7 +418,8 @@ export default {
       taskList: [],
       typeList: [],
       courtAllList: [],
-      recordDetailList: [],
+      recordDetailList: []
+      
     };
   },
 
@@ -662,6 +664,8 @@ export default {
       }
       let str = JSON.stringify(v);
       let roleInfo = JSON.parse(str);
+      this.currentRecord.courtTitle=roleInfo.courtTitle;
+      this.currentRecord.departmentTreeTitle=roleInfo.departmentTreeTitle;
       getRecordDetailList({ recordId: roleInfo.id }).then((res) => {
         if (res.success) {
           this.recordDetailList = res.result;
