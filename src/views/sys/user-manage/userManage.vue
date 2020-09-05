@@ -7,12 +7,12 @@
     <Card>
       <Row v-show="openSearch" @keydown.enter.native="handleSearch">
         <Form ref="searchForm" :model="searchForm" inline :label-width="70">
-          <Form-item label="用户名" prop="nickName">
+          <Form-item label="登录账号" prop="username">
             <Input
               type="text"
-              v-model="searchForm.nickName"
+              v-model="searchForm.username"
               clearable
-              placeholder="请输入用户名"
+              placeholder="请输入登录账号"
               style="width: 200px"
             />
           </Form-item>
