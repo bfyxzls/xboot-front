@@ -48,7 +48,7 @@ export const userInfoEdit = (params) => {
 }
 // 个人中心修改密码
 export const changePass = (params) => {
-    return postRequest('/user/modifyPass', params)
+    return postBodyRequest('/user/modifyPass', params)
 }
 // 解锁
 export const unlock = (params) => {
