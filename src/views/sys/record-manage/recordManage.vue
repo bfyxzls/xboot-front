@@ -304,8 +304,8 @@ export default {
           sortable: true,
         },
         {
-          title: "任务",
-          key: "taskTitle",
+          title: "物业",
+          key: "tenementTitle",
           minWidth: 100,
           sortable: true,
         },
