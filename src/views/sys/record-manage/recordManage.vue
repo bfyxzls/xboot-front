@@ -91,13 +91,18 @@
     </Card>
 
     <!-- 编辑 -->
-
     <Modal :title="modalTitle" v-model="roleModalVisible" :mask-closable="false" :width="500">
+      <div style="border-bottom:1px dashed #aaa;padding:5px;font-weight:bold">
+        <div style="font-weight:bold">位置：{{currentRecord.departmentTreeTitle}}</div>
+        <div style="font-weight:bold">小区：{{currentRecord.courtTitle}}</div>
+        <div style="font-weight:bold">编号：{{currentRecord.id}}</div>
+        <div style="font-weight:bold">类型：{{currentRecord.typeTitle}}</div>
+      </div>
       <Form :label-width="80">
         <div
           v-for="(item, i) in recordDetailList"
           :key="i"
-          style="border-bottom:1px dashed #aaa;padding:5px;"
+          style="border-bottom:1px dashed #aaa;padding:5px;font-weight:bold"
         >
           <div>{{item.templateTitle}}</div>
           <div v-if="item.questionType === 1">
@@ -148,16 +153,17 @@
     </Modal>
 
     <Modal :title="modalTitle" v-model="roleModalDetailVisible" :mask-closable="false" :width="500">
+     <div style="border-bottom:1px dashed #aaa;padding:5px;font-weight:bold">
+        <div style="font-weight:bold">位置：{{currentRecord.departmentTreeTitle}}</div>
+        <div style="font-weight:bold">小区：{{currentRecord.courtTitle}}</div>
+        <div style="font-weight:bold">编号：{{currentRecord.id}}</div>
+        <div style="font-weight:bold">类型：{{currentRecord.typeTitle}}</div>
+      </div>
       <div
         v-for="(item, i) in recordDetailList"
         :key="i"
         style="border-bottom:1px dashed #aaa;padding:5px;"
       >
-        <div>位置：{{currentRecord.departmentTreeTitle}}</div>
-         <div>小区：{{currentRecord.courtTitle}}</div>
-         <div>编号：{{item.id}}</div>
-         <div>类型：{{item.typeTitle}}</div>
-         
         <div>题目：{{item.templateTitle}}</div>
         <div v-if="item.score!=null">分数：{{item.score}}</div>
         <div v-if="item.textValue!=null && item.textValue.length>0">文本选项：{{item.textValue}}</div>
@@ -418,8 +424,7 @@ export default {
       taskList: [],
       typeList: [],
       courtAllList: [],
-      recordDetailList: []
-      
+      recordDetailList: [],
     };
   },
 
@@ -616,10 +621,14 @@ export default {
       }
       let str = JSON.stringify(v);
       let roleInfo = JSON.parse(str);
+      this.currentRecord.courtTitle = roleInfo.courtTitle;
+      this.currentRecord.departmentTreeTitle = roleInfo.departmentTreeTitle;
+      this.currentRecord.id = roleInfo.id;
       getRecordDetailList({ recordId: roleInfo.id }).then((res) => {
         if (res.success) {
           this.recordDetailList = res.result;
           for (var img in this.recordDetailList) {
+            this.currentRecord.typeTitle = res.result[0].typeTitle;
             if (this.recordDetailList[img].pictureUrl != null) {
               this.currentfile[
                 this.recordDetailList[img].id
@@ -664,11 +673,14 @@ export default {
       }
       let str = JSON.stringify(v);
       let roleInfo = JSON.parse(str);
-      this.currentRecord.courtTitle=roleInfo.courtTitle;
-      this.currentRecord.departmentTreeTitle=roleInfo.departmentTreeTitle;
+      this.currentRecord.courtTitle = roleInfo.courtTitle;
+      this.currentRecord.departmentTreeTitle = roleInfo.departmentTreeTitle;
+      this.currentRecord.id = roleInfo.id;
+
       getRecordDetailList({ recordId: roleInfo.id }).then((res) => {
         if (res.success) {
           this.recordDetailList = res.result;
+          this.currentRecord.typeTitle = res.result[0].typeTitle;
         }
       });
       this.roleForm = roleInfo;
