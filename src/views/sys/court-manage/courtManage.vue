@@ -13,6 +13,8 @@
           <Select v-model="searchForm.projectType" placeholder="请选择" clearable style="width: 200px">
             <Option value="商品房">商品房</Option>
             <Option value="保障房">保障房</Option>
+            <Option value="房改房">房改房</Option>
+            <Option value="其他">其他</Option>
           </Select>
         </Form-item>
         <Form-item label="名称" prop="title">
@@ -90,6 +92,8 @@
           <Select v-model="roleForm.projectType" placeholder="请选择" clearable style="width: 200px">
             <Option value="商品房">商品房</Option>
             <Option value="保障房">保障房</Option>
+             <Option value="房改房">房改房</Option>
+            <Option value="其他">其他</Option>
           </Select>
         </Form-item>
         <FormItem label="所属部门">
